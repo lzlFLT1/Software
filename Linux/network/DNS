@@ -1,13 +1,13 @@
-DNS <==> Domain Name System <==> 域名系统
+DNS = Domain Name System = 域名系统
 
-本地 DNS 配置：
+本地域名解析配置：
     shell> vim /etc/hosts
     以下是该文件的内容：
     Formate Pattern = ip     domain1     alias1      domain2     alias2
     127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4 # ipv4 本地环路地址，即回送地址
     ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6 # ipv6 本地环路地址，即回送地址
 
-远程 DNS 配置：
+DNS 服务器配置：
     shell> vim /etc/resolv.conf      
     以下是该文件的内容：
     Format Pattern = nameserver *.*.*.*
