@@ -1,0 +1,5 @@
+网络服务对应端口查看：
+    shell> vim /etc/services 
+    Format Pattern = 服务名     端口号/协议    别名      # 注释
+    ftp     21/tcp
+    ftp     21/udp        fsp fspd       # 21 号端口被用于 ftp 和 fsp

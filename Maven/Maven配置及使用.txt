@@ -1,0 +1,188 @@
+################## Maven 的学习笔记 ###################################
+
+1 下载并解压Maven{
+	下载：apache-maven-3.5.0-bin.zip
+	解压到该目录下：D:\Maven
+}
+
+
+2 配置环境变量（MAVEN_HOME，Path）{
+	MAVEN_HOME = D:\Maven\apache-maven-3.5.0
+	Path = %MAVEN_HOME%\bin
+}
+
+
+3 测试 Maven 是否安装成功{
+	运行 - cmd - 输入：mvn -version - Enter
+	如果出现 Maven 版本则表明安装成功
+}
+
+
+4 配置Maven的配置文件（本地仓库文件，镜像）{
+
+	4.0 命令行窗口输入 mvn help:system   用于创建maven本地仓库并下载必要的依赖包
+
+	4.1 Maven 全球仓库地址查看：%MAVEN_HOME% 目录下搜索 maven-model-builder-3.5.0.jar ，打开该 jar 包，找到里面的 pom-4.0.0.xml 文件即可看到中央仓库地址：https://repo.maven.apache.org/maven2
+
+	4.2 常用国内镜像{
+		http://maven.net.cn/content/groups/public
+		http://maven.aliyun.com/nexus/content/groups/public
+	}
+	
+	
+	4.3 Maven 本地仓库的配置{
+		4.3.1 默认本地仓库位置：%HOME%\.m2    // %HOME% = C:\Users\Kasei
+		4.3.2 修改默认仓库位置：{
+			创建本地仓库目录：D:/repository	
+			复制 %MAVEN%/conf/settins.xml 到 .m 目录下并修改		
+			修改 %HOME%\.m2\settings.xml 文件中，本地仓库地址标签： <localRepository>D:/repository</localRepository> 即可
+			测试是否成功：编译一个项目，查看本地仓库中是否下载了依赖包
+		}
+	}
+	
+	
+	4.4 Maven 镜像配置{
+	
+		修改本地仓库下的 settings.xml 文件如下：
+		<mirrors>
+			<mirror>
+			   <id>UK/id>
+			      <mirroOf>central</mirrorOf>
+			      <name>K Central</name>
+			      <url>htp://uk.maven.org/maven2</url><!-- 使用英国的镜像，类似网易yum源 -->
+			</mirror>
+		</mirrors>
+	}
+}
+
+
+
+5 Maven 项目目录结构{  
+
+	MavenWeb
+		├─ pom.xml 
+		├─ target   //存放运行生成的文件
+		└─ src
+			├─ test
+			│	└─ java
+			│		└─ 自定义包
+			│
+			│
+			└─ main
+				├─ webapp   
+				├─ resources   //存放资源文件
+				└─ java
+					└─ 自定义包	
+ 
+	                         
+		注意：所有目录和文件不能缺，缺了会错
+}
+
+
+
+6 手工 Mavean 项目的搭建{	
+
+	6.1 创建maven完整的目录结构
+	6.2 在源代码目录下编写代码
+	6.3 在 pom.xml 文件中配置项目的依赖包
+	6.4 管理员权限 cmd，cd 进入写好的项目 MavenWeb 目录下
+	6.5 执行 mvn compile 命令，对该项目进行编译
+	6.6 执行 mvn test 命令，执行 MavenWeb/src/test/java 目录下 junit 的测试程序
+	6.7 执行 mvn package 命令，会对项目进行打包，生成的文件在 target 目录下面，把该文件拷贝到 tomcat webapp 路径下即可运行
+	6.8 执行 mvn clean 命令，删除 target 目录
+	6.9 执行 mvn install 命令，安装项目打包好的 jar 包到本地仓库中
+	mvn dependency:tree 该命令会打印一个当前项目的依赖树
+	
+	6.10 执行 mvn archetype:generate 命令，自定创建 Maven 目录骨架
+		一步到位的创建骨架命令：mvn archetype:generate -DgroupId=com.kasei -DartifactId=MavenWeb -DarchetypeArtifactId=maven-archetype-webapp
+}
+
+
+
+
+7 在 eclipse 中集成 maven 插件 {
+
+	5.1 检查 eclipse 是否已经安装 maven 插件：Window - Preferences 查看左侧边栏有没有 Maven 选项，有则说明插件已经安装
+	
+	5.2 Maven 插件安装：下载 eclipse 中 m2e 的插件，并将其复制到 %eclipse%/dropins 目录下重启 eclipse 即可
+	
+	5.3 插件的配置{
+	
+		5.3.1 修改 %eclipse%/eclipse.ini 文件，添加以下内容{
+			-vm
+			%JAVA_HOME%/bin/javaw.exe           // 实际配置时把变量 %JAVA_HOME% 替换成具体值	
+		}
+		
+		5.3.2 修改 eclipse 的 jre : Window - Preferences - Java - Installed JREs - Add - 选择 jre 目录为 %JAVA_HOME% 确定
+ 
+		5.3.3 修改 eclipse 中 Maven 的默认配置{
+			Window - Preferences - Maven - Installations - 点击Add按钮 - 找到 %MAVEN_HOME% 添加
+			Window - Preferences - Maven - User Settings - 确保 User Settings 路径框里的内容是: %HOME%\.m2\settings.xml
+			Window - Preferences - Maven - Global Settings - 跟 User Settings 一样
+		}
+	}
+}
+
+
+
+
+8 eclipse 中 Mavean 项目的搭建及使用 {	
+
+	8.1 eclipse 创建一个 Maven 项目{
+		
+		Eclipse - Project Explorer 窗口 - 空白处右键 - new - project 
+		- Maven - Maven Project - next - 选择 quickstart 
+		- next - [Group Id]=com.kasei [Artifact Id]=quick 
+		- Finish
+	}
+	
+	8.2 maven 项目的启动 {
+		右击项目 - run as - Maven build... - Goals框中输入：compile - 点击 Run 
+		- 如果报错 - 需要向 jre 传递一个参数 - Window - Preferences - Java - Installed JREs - 选中使用的 JRE - Edit 
+		 - 在 Default VM Arguments 框中输入引号内内容："-Dmaven.multiModuleProjectDirectory=$MAVEN_HOME"
+		 - Finish
+	}
+	
+}
+
+
+9 eclipse 使用 maven 构建 web 项目{
+	eclipse 新建 object - maven object - next - 选择 webapp - next - 设置到参数 - finish
+	
+	依赖包坐标查询网址：https://www.mvnrepository.com
+	
+	补全 maven 目录结构：src/main/java, src/test/java
+	
+	设置 pom.xml 文件中  <packaging>war</packaging> 为 war； 添加 servlet 依赖；添加 jetty maven plugin 插件
+	
+	检查编译导出路径：右击项目 - build path - configure build path... - Source 选项卡 - 查看输出目录是否都是 /target/classes
+	
+	将项目转换成 web 项目： 右击项目 - properties - project facets - 勾选 dynamic web module, java, javascript 三项
+	
+	修改部署时的默认配置：右击项目 - properties - deployment assembly - 删除 /src/test/* 匹配的项
+		
+	
+	运行方法一：把打包好的 war 文件拷贝到 web 容器中就可以运行了
+	
+	运行方法二：pom.xml 中添加 jetty maven plugin 插件，然后启动 jetty maven plugin ：右击项目 - run as - Maven build... - Goals框中输入：jetty:run，就可以进浏览器访问了	
+	
+	运行方法三：{
+		进 tomcat 官网，左侧边栏， 点击 maven plugin， 点击 version 2.2， 复制案例到项目中的 pom.xml 文件，并配置
+		右击项目 - run as - Maven build... - Goals框中输入：clean 
+		右击项目 - run as - Maven build... - Goals框中输入：compile
+		右击项目 - run as - Maven build... - Goals框中输入：package
+		右击项目 - run as - Maven build... - Goals框中输入：tomcat7:run
+		
+		或
+		<executions>
+        	<execution>
+        		<phase>package</phase>
+        		<goals>
+        			<goal>run</goal>
+        		</goals>
+        	</execution>
+        </executions>
+		右击项目 - run as - Maven build... - Goals框中输入： clean package 
+	}
+}
+

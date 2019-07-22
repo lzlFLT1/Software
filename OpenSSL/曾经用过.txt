@@ -1,0 +1,85 @@
+# 产生随机数
+openssl rand -rand ./private/random.seed -base64 -out ./private/random.seed 128
+
+
+
+
+# 创建 根证书 密钥对
+openssl ecparam -genkey -name secp256k1 -rand ./private/random.seed -out ./private/rootca.key.pem
+# 创建 根证书
+openssl req -new -sha384 -days 3650 -x509 -set_serial 01 -rand ./private/random.seed -config ./ca.cnf -key ./private/rootca.key.pem -out ./rootca.crt.pem
+# 查看 根证书
+openssl x509 -in ./rootca.crt.pem -text
+
+
+
+
+
+
+# 创建 中间证书 密钥对
+openssl ecparam -genkey -name secp256k1 -rand ./private/random.seed -out ./private/interca.key.pem
+# 创建 中间证书请求
+openssl req -new -sha384 -rand ./private/random.seed -config ./ca.cnf -key ./private/interca.key.pem -out ./interca.csr.pem
+# 输入 CommonName 和 Email
+inter.haku.kasei
+admin@inter.haku.kasei
+# 用 根证书私钥 签署 中间证书请求，生成中间证书
+openssl ca -config ./ca.cnf -name default_ca -policy policy_strict -days 1024 -md sha384 -keyfile ./private/rootca.key.pem -cert ./rootca.crt.pem -extensions v3_intermediate_ca -utf8  -in ./interca.csr.pem -out ./interca.crt.pem
+# 查看 中间证书
+openssl x509 -in ./interca.crt.pem -text
+
+
+
+
+
+
+# 创建 证书链文件， 就是把 中间证书 和 根证书 的内容放在一个文件里面； @trap 中间证书在上面，根证书在下面
+cat ./interca.crt.pem ./rootca.crt.pem > ./chain.crt.pem 
+# 将 pem 格式的证书转成 p12 格式的证书（windows 专用）
+openssl pkcs12 -export -name "kasei chain" -inkey ./private/interca.key.pem -in ./interca.crt.pem -certfile ./chain.crt.pem -out ./chain.crt.p12    # 提示 export 密码（即:新证书密码）： 直接回车，不要密码
+
+
+
+
+
+
+# 创建 服务器证书 密钥对
+openssl ecparam -genkey -name secp256k1 -rand ./private/random.seed -out ./private/server.key.pem
+# 创建 服务器证书请求
+openssl req -new -sha384 -rand ./private/random.seed -config ./ca.cnf -key ./private/server.key.pem -out ./server.csr.pem
+# 输入 CommonName 和 Email
+1291114093.ml
+admin@1291114093.ml
+
+# 用 中间证书私钥 签署 服务证书请求，生成服务器证书
+openssl ca -config ./ca.cnf -name default_ca -policy policy_anything -days 365 -md sha384 -keyfile ./private/interca.key.pem -cert ./interca.crt.pem -extensions v3_user_crt -utf8  -in ./server.csr.pem -out ./server.crt.pem
+
+openssl ca -config ./ca.cnf -name default_ca -policy policy_anything -days 365 -md sha384 -keyfile ./private/interca.key.pem -cert ./interca.crt.pem -extensions v3_user_crt_ext -utf8  -in ./server.csr.pem -out ./server.crt.pem
+# 查看 服务器证书
+openssl x509 -in ./server.crt.pem -text
+
+
+
+
+
+# 模拟一个 TLS 服务端供客户端验证
+openssl s_server -accept 4433 -HTTP -tls1 -cert ./server.crt.pem -key ./private/server.key.pem -cipher AES256-GCM-SHA384
+
+openssl s_client -CAfile ./rootca.crt.pem -trusted_first -connect [2001:470:18:1a0a::2]:4433
+
+
+    
+# 浏览器地址栏中输入服务器 IP 及端口
+https://[2001:470:18:1a0a::2]:4433/hello.html
+    
+# 在浏览器上安装 Root CRT 和 Intermediate CRT，再次查看安全性
+    
+    
+# 吊销证书, CRL(Certificate Revocation List) 文件
+
+
+在Windows 2012中使用ECDHE-ECDSA-AES256-GCM-SHA384
+
+
+ https://www.ssllabs.com/
+

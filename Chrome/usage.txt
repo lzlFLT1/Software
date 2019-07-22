@@ -1,0 +1,47 @@
+# 解决 chrome 在 root 账号下无法运行
+    shell> vi /opt/google/chrome/google-chrome                       # 编辑该文件 修改下列行即可
+    exec -a "$0" "$HERE/chrome" "$@"  修改为  exec -a "$0" "$HERE/chrome" "$@" --no-sandbox
+
+# 解决 chrome 运行时弹出创建默认密钥环的问题
+    不设置密码，直接点继续即可，否则每次都要输入密码
+    
+# Chrome Debug 中 Source 中源码格式不对
+    打开一个 Source 文件，点击 Pretty print 格式化代码，就是文件底下的 '{}' 图标
+    
+# Chrome Debug 中查找 Source 中的代码
+    Console 中 Ctrl+Shift+F 查找
+
+# Chrome 所有命令
+    在 URL 地址栏中输入： chrome://about/ 可以查看所有命令列表
+
+# 设置 Google 搜索结果在新的浏览器窗口中打开：
+    进入 Google 搜索页面，点击 setting ，里面有结果打开位置选项
+
+# 链接在新标签页中打开：
+    按住 Ctrl 点击链接
+
+# 配置 DNS Server ：防止很多网站进不去 	
+    控制面板-->网络和Internet-->网络共享中心-->本地连接|以太网-->属性-->网络
+    -->双击打开 Internet 协议版本4-->选择“使用下面的DNS服务器地址”
+    -->然后手动输入首选地址42.120.21.30(OpenerDNS)备用dns为8.8.8.8，然后点击“确定”即可，点击确定即可。
+    223.5.5.5 223.6.6.6 阿里域名服务器
+    119.29.29.29
+
+# chrome 关闭同源策略
+    在 chrome 启动参数中添加 --args --disable-web-security --user-data-dir  即可
+    例如：shell> chrome --args --disable-web-security --user-data-dir
+
+# 域名 IP 对应查询网站
+    https://www.ipaddress.com/
+    
+# 常用 DNS 服务器配置
+    中国互联网中心：
+        1.2.4.8, 210.2.4.8, 101.226.4.6   # 适合电信及移动
+        123.125.81.6    # 适合联通
+    阿里 DNS
+        223.5.5.5, 223.6.6.6 
+    Google DNS
+        8.8.8.8, 8.8.4.4
+    Open DNS
+        208.67.222.222, 208.67.222.220, 208.67.220.222, 208.67.220.220,
+        

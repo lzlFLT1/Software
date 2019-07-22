@@ -1,0 +1,26 @@
+购买 VPS：
+    https://www.vultr.com/                                  # Vultr VPS
+    https://bwh88.net/clientarea.php?action=products        # 搬瓦工 VPS
+
+申请免费域名：
+    https://www.freenom.com/zh/freeandpaiddomains.html      # 注册免费域名
+
+申请免费 CDN:
+    https://www.cloudflare.com/                             # 最好挂美国代理访问
+    https://www.alibabacloud.com/zh/product/cdn             # 阿里的 CDN
+    
+
+VPS 上安装操作系统：
+    CentOS7             # 最熟悉
+
+VPS 上安装 V2Ray:
+    # 自己查
+
+本机安装 V2Ray：
+    # 自己查
+
+
+
+
+    
+  

@@ -1,0 +1,8 @@
+NIC <==> Network Interface Controller <==> Network Adapter <==> 网卡 <==> 网络适配器
+
+网卡配置文件位置：
+    shell> cd /etc/sysconfig/network-scripts        # 该目录下 ifcfg- 开头的文件都是网卡的配置文件，一个配置文件对应一张网卡
+    
+网卡配置文件内容：
+    shell> vim /etc/sysconfig/network-scripts/ifcfg-ens33
+    

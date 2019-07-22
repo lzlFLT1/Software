@@ -1,0 +1,8 @@
+1. 官网下载 UltraEdit ： 当前破解软件测试可用版本： UltraEdit v26.00.0.48
+2. 安装到 E:\UltraEdit 目录下
+3. 解压 IDM_Patch_4.6.zip 拷贝 IDM_Patch_4.6.exe 到上面目录下
+4. 点击运行，选择对应的软件，点击 Patch 即可
+
+能不能用不知道
+用户名:767473811 授权码:LJIM6-FMTN3-JOQFD-ROPNP-JMEJV-MJGNM-GJGXX-IPHMH
+用户名:winbious 授权码:UJOXO-JBRHM-NKHN2-OLQEA-FKLFV-MEFO3-OBSRV-NLGDO

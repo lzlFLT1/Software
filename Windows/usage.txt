@@ -1,0 +1,71 @@
+1. windows services 配置
+    Win+R -> services.msc -> ok -> 这里面包含所有注册的 windows 服务
+
+2. 注册表操作
+    Win+R -> gpedit.msc -> 进入注册表
+
+3. 远程桌面连接配置
+    Win+R > gpedit.msc > Local Computer Policy > Computer Configuration -> Administrative Templates -> System -> Credentials Delegation ->  双击 Encryption Oracle Remediation 
+    -> 选择 Enable -> Option: Protection Level 设置为 Vulnerable
+
+4. 配置环境变量
+    永久生效：
+        我的电脑->高级系统设置->环境变量
+
+    当前 shell 生效：
+    shell> set                                                  # 查看当前所有环境变量
+    shell> set M2_HOME                                          # 查看环境变量值
+    shell> set M2_HOME=F:\Maven                                 # 覆盖环境变量
+    shell> set Path=%Path%;D:\Mysql                             # 追加环境变量
+
+
+5. windows 远程桌面不能识别本地机器的麦克风的问题？
+
+    1. 控制面板 修改默认麦克风和扬声器
+    2. 远程桌面连接时，配置将远程桌面声音 和 录音 从本地机器播放和录入
+    3. 修改 远程机 注册表
+        Win+R -> regedit 
+        -> [HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp\[fDisableAudioCapture]
+        修改该变量的值为 0 即可
+
+6. 删除某个文件时，提示被程序占用，怎么执行删除操作
+    Win+R -> explorer.exe 进入 Resource Monitor -> 选择 CPU 选项卡 -> 在 Associated Handles 后面的搜索框中输入被占用文件的 绝对路径
+    -> 找到占用进程的 PID -> Ctrl+Alt+Del 进入 Task Manager -> 杀掉对应 PID 的进程 -> 然后再删除文件夹
+
+    -> 如果占用的进程为： explorer.exe -> Win+R 打开一个 命令行窗口 -> 杀掉 explorer.exe 进程
+    -> shell> del E:\ggh 删掉你所要删的文件 -> shell> explorer.exe -> 完成
+
+7. 电脑无法解析 DNS 地址，但用手机却可以解析
+    1. 清除本机 DNS 缓存： shell> ipconfig /flushdns
+    2. 重置 winsock 目录设置： shell> netsh winsock reset
+
+8. Win+R 能打开的程序
+    1. cmd		# 打开命令提示符
+    2. resmon	# 打开资源监视器
+    3. regedit	# 打开注册表编辑器
+    4. explorer	# 打开资源管理器
+    5. mstsc	# 远程桌面连接
+    6. perfmon	# 性能监视器
+    7. taskmgr	# 任务管理器
+    
+    清空 Win+R 历史记录
+    Win+R -> regedit -> HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU -> 清空里面的值即可
+
+9. 根据域名查询 ip 地址
+    shell> nslookup www.baidu.com
+    shell> ping www.baidu.com 
+
+10. 好用的 DNS
+    OpenNIC DNS 官网：http://www.opennicproject.org/   该网站会推荐最佳的 DNS 服务器
+    114 DNS: 14.114.114.114  114.114.115.115 
+    Opener DNS: 42.120.21.30 
+    Google DNS: 8.8.8.8   8.8.4.4
+    阿里DNS： 223.5.5.5 223.6.6.6 
+    V2EX DNS：199.91.73.222   178.79.131.110 
+    OpenDNS：208.67.222.222   208.67.220.220 
+    OneDNS：112.124.47.27 114.215.126.16 
+    
+    
+    
+    
+

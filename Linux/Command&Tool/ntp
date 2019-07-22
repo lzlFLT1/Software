@@ -1,0 +1,16 @@
+同步网络时间：
+
+安装 ntp(network time protocol)：
+    shell> yum list | grep ntp
+    shell> yum install ntp -y
+    shell> yum install ntpdate -y
+    
+同步：
+    shell> systemctl list-unit-files | grep ntp   # 查看 ntp 安装后生成的服务
+    shell> systemctl status ntpd        # 查看 ntpd 服务是不是启动状态
+    shell> systemctl stop ntpd          # 如果 ntpd 服务是活动状态，那么先关闭 ntpd 服务
+    shell> ntpdate cn.ntp.org.cn      # 将本机时间跟 cn.ntp.org.cn 网络时间服务器的时间同步
+    shell> systemctl start ntpd         # 再次启动 ntpd 服务
+    
+    
+    

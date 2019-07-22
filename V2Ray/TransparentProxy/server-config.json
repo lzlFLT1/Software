@@ -1,0 +1,102 @@
+{
+  "log": {
+    "loglevel": "warning"
+  },
+  "inbounds": [
+    {
+      "tag": "vmess-in",
+      "protocol": "vmess",
+      "port": "49152-49162",            // 公认端口： 0-1023; 注册端口： 1024-49151; 动态（私有）端口： 49152-65535
+      "listen": "0.0.0.0",              // 允许一个 IP 地址，往该 inbound 传数据， 0.0.0.0 表示所有 IP 地址都可以传数据
+      "settings": {
+        "clients": [
+          {
+            "id": "27848739-7e62-4138-9fd3-098a63964b6b",
+            "level": 0,
+            "alterId": 4,
+            "email": "kasei@kasei.com"
+          }
+        ],
+        "disableInsecureEncryption": true
+      },
+      "streamSettings": {},      
+      "sniffing": {
+        "enabled": false,
+        "destOverride": ["http", "tls"]
+      },
+      "allocate": {
+        "strategy": "always",         // 端口策略，监听所有已分配的端口号
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "tag": "freedom-out",
+      "protocol": "freedom",
+      "sendThrough": "0.0.0.0",       // 用于发送数据的 IP 地址，当且仅当主机有多个 IP 地址时有效，默认 0.0.0.0     
+      "settings": {
+        "domainStrategy": "UseIP",    // AsIs 表示直接连接域名， UseIP 表示先通过本配置配置的 dns 解析成 IP 地址，再连接
+        "userLevel": 0
+      }
+    }  
+  ],
+  "routing": {
+    "domainStrategy": "IPIfNonMatch",
+    "rules": [
+      {
+        "type": "field",
+        "inboundTag": [
+          "vmess-in"
+        ],
+        "outboundTag": "freedom-out"
+      }
+    ]
+  },
+  "dns": {
+    "tag": "dns-in",                  // 由此 DNS 发出的查询流量，除 localhost 外，都会带有此标识，可在路由使用 inboundTag 进行匹配
+    "clientIp": "1.2.3.4",            // 当前发起 DNS 请求的 IP 地址，不能是 私有地址    
+    "hosts": {
+      "kasei.com": "127.0.0.1"
+    },
+    "servers": [
+      "localhost",                    // 优先使用本机预设的 DNS 配置，即 hosts 中配置的域名
+      {             
+        "address": "223.5.5.5",       // 国内域名使用国内的 DNS 解析
+        "port": 53,
+        "domains": [
+          "geosite:tld-cn",
+          "geosite:geolocation-cn"
+        ]
+      },
+      {
+        "address": "8.8.8.8",         // 国外域名使用国外的 DNS
+        "port": 53,
+        "domains": [
+          "geosite:google",
+          "geosite:facebook",
+          "geosite:geolocation-!cn"
+        ]
+      },
+      "8.8.8.8",
+      "8.8.4.4",
+      "1.1.1.1"      
+    ]    
+  },  
+  "policy": {
+    "levels": {
+      "0": {
+        "handshake": 8,               // 如果 tcp 握手时间超过 8 秒，那么中断该连接
+        "connIdle": 180,              // tcp 连接空闲超过 300 秒，那么终端该链接
+        "uplinkOnly": 2,              // 如果服务器端关闭一条连接时，本配置所在的计算机会等待 2 秒后，再关闭连接，适用于 outbound
+        "downlinkOnly": 4,            // 当客户端关闭一条连接时，本配置所在的计算机会等待 4 秒后，再关闭连接，适用于 outbound
+        "statsUserUplink": false,
+        "statsUserDownlink": false,
+        "bufferSize": 5120           // 设置每个连接内部缓存大小为 5120 KB
+      }
+    },
+    "system": {
+      "statsInboundUplink": false,
+      "statsInboundDownlink": false
+    }
+  }
+}

@@ -1,0 +1,6 @@
+# Installation
+shell> yum install openssl
+
+
+# Settings
+# CA 配置文件路径：/etc/pki/tls/openssl.cnf

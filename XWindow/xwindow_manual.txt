@@ -1,0 +1,25 @@
+1. X Window 中的概念
+    X Client： 是需要图形显示的应用程序
+    X Server： 负责具体显示和传递用户交互行为
+    X Protocol: X 协议
+    
+    DISPLAY 环境变量： 控制将图形显示到何处； 格式为 hostname:displaynumber.screennumber    其中 screennumber 表示多个显示屏
+
+
+2. 操作
+    X Server 端：
+    shell> xhost +192.168.0.1   # 允许 192.168.0.1 这个主机发送 X Request 到本机
+    shell> xhost -192.168.0.1   # 禁止 192.168.0.1 发送 X Request 到本机
+    
+    shell> xhost +              # 允许所有主机向本机发送 X Request 请求
+    shell> xhost +              # 再次执行，禁止所有主机向本机发送 X Request 请求
+    
+    
+    /etc/X*.hosts
+    
+    
+    shell> export DISPLAY=192.168.0.254:0           # :0 表示发送到 0 号显示屏幕
+    
+    /etc/X11/gdm/gdm.conf               # 显示屏启动配置文件，默认启动 0 好显示屏
+    0=/usr/bin/X11/X -bpp 8 vt7         # -bpp 参数指定颜色数，此处为 8 位色深； vt7 表示Ctrl+Alt+F7可切换到该屏幕
+    1=/usr/bin/X11/X -bpp 8 vt9

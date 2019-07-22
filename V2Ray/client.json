@@ -1,0 +1,235 @@
+{
+  "log": {
+    "loglevel": "debug"
+  },
+  "inbounds": [
+    {
+      "tag": "socks-in",
+      "protocol": "socks",
+      "port": 12345,
+      "listen": "127.0.0.1",
+      "settings": {
+        "auth": "noauth"
+      }
+    }
+  ],
+  "outbounds": [
+    /** todo 使用 HTTP2  */
+    {
+      "tag": "ipv6-vmess-out",
+      "protocol": "vmess",
+      "settings": {
+        "vnext": [
+          {
+            "address":  "2001:470:18:1a0a::2",
+            "port": 10086,
+            "users": [
+              {
+                "id": "bb553e11-f08b-e87a-0779-c74cdc0a7e1c",
+                "alterId": 4,
+                "security": "chacha20-poly1305",
+                "level": 0
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "h2",
+        "httpSettings": { //此项是关于 HTTP/2 的设置
+          "path": "/ray"
+        },
+        "security": "tls"
+      }
+    },
+    /** todo 使用 Websocket  */
+    {
+      "tag": "ipv6-vmess-out",
+      "protocol": "vmess",
+      "settings": {
+        "vnext": [
+          {
+            "address":  "2001:470:18:1a0a::2",
+            "port": 10086,
+            "users": [
+              {
+                "id": "bb553e11-f08b-e87a-0779-c74cdc0a7e1c",
+                "alterId": 4,
+                "security": "chacha20-poly1305",
+                "level": 0
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "wsSettings": {
+          "path": "/",
+          "headers": {
+            "Host": "www.1291114093.ml"
+          }
+        }
+      }
+    },
+    /** todo 使用 TCP 传输， HTTP 伪装， TLS 加密 */
+    {
+      "tag": "tcp-http-feign-tls-vmess-out",
+      "protocol": "vmess",
+      "settings": {
+        "vnext": [
+          {
+            "address":  "2001:470:18:1a0a::2",
+            "port": 10086,
+            "users": [
+              {
+                "id": "bb553e11-f08b-e87a-0779-c74cdc0a7e1c",
+                "alterId": 4,
+                "security": "chacha20-poly1305",
+                "level": 0
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "tls",
+        "tcpSettings": {
+          "header": { // http 伪装配置，必须保证客户端和服务端配置一致，服务端只需配 response 客户端只需配 request
+            "type": "http",  
+            "request": {
+              "version": "1.1",
+              "method": "GET",
+              "path": ["/"],
+              "headers": {
+                "Host": ["www.baidu.com", "www.bing.com"],
+                "User-Agent": [
+                  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36",
+                  "Mozilla/5.0 (iPhone; CPU iPhone OS 10_0_2 like Mac OS X) AppleWebKit/601.1 (KHTML, like Gecko) CriOS/53.0.2785.109 Mobile/14A456 Safari/601.1.46"
+                ],
+                "Accept-Encoding": ["gzip, deflate"],
+                "Connection": ["keep-alive"],
+                "Pragma": "no-cache"
+              }
+            }            
+          }
+        },
+      }
+    },
+    {
+      "tag": "ipv6-vmess-out",
+      "protocol": "vmess",
+      "settings": {
+        "vnext": [
+          {
+            "address":  "2001:470:18:1a0a::2",
+            "port": 10086,
+            "users": [
+              {
+                "id": "bb553e11-f08b-e87a-0779-c74cdc0a7e1c",
+                "alterId": 4,
+                "security": "chacha20-poly1305",
+                "level": 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "tag": "ipv4-vmess-out",
+      "protocol": "vmess",
+      "settings": {
+        "vnext": [
+          {
+            "address": "1.2.3.4",
+            "port": 10086,
+            "users": [
+              {
+                "id": "bb553e11-f08b-e87a-0779-c74cdc0a7e1c",
+                "alterId": 4,
+                "security": "chacha20-poly1305",
+                "level": 0
+              }
+            ]
+          }
+        ]
+      },
+      "proxySettings": {
+        "tag": "shadowsocks-out"   // 配置代理转发
+      },
+    },        
+    {
+      "tag": "shadowsocks-out",
+      "protocol": "shadowsocks",
+      "sendThrough": "0.0.0.0",         
+      "settings": {
+        "servers": [
+          {
+            "address": "66.98.122.202",
+            "port": 1234,
+            "method": "chacha20-ietf-poly1305",
+            "password": "********",
+            "ota": false,
+            "email": "master@kasei.com",
+            "level": 0
+          }
+        ]
+      }
+    },
+    {
+      "tag": "blackhole-out",
+      "protocol": "blackhole",
+      "settings": {
+        "response": {
+          "type": "http"      // none: 直接关闭链接; http: 返回一个简单的 HTTP 403 数据包，然后关闭连接
+        }
+      }
+    },
+    {
+      "tag": "freedom-out",
+      "protocol": "freedom",
+      "sendThrough": "0.0.0.0",      // 主机有多个 IP 时，使用指定的 IP 发送数据
+      "settings": {
+        "domainStrategy": "AsIs",
+        "userLevel": 0
+      }
+    }
+  ],
+  "routing": {
+    "domainStrategy": "AsIs",
+    "rules": [
+      {
+        "type": "field",
+        "domain": [
+          "full:kasei.com"
+        ],
+        "network": "tcp,udp",
+        "outboundTag": "blackhole-out"
+      },
+      {
+        "type": "field",
+        "domain": [
+          "geosite:cn"
+        ],
+        "ip": [
+          "geoip:private",
+          "geoip:cn"
+        ],
+        "network": "tcp,udp",
+        "outboundTag": "freedom-out"
+      },
+      {
+        "type": "field",
+        "domain": [
+        ],
+        "network": "tcp,udp",
+        "inboundTag": [
+          "socks-in"
+        ],
+        "outboundTag": "vmess-out"
+      }           
+    ]
+  }
+}

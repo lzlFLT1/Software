@@ -1,0 +1,2 @@
+使虚拟机桌面大小，随虚拟机窗口大小自动调整：
+    View -> Autosize -> 选择 Autofit Guest

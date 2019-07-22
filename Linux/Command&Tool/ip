@@ -1,0 +1,12 @@
+# ip tunnel: 隧道命令
+shell> ip tunnel show           # 列出所有 tunnel
+
+shell> ip tunnel add 
+        myTunnelName            # 隧道名称
+        mode sit                # 数据包封装模式
+        remote 8.8.8.8          # 隧道远程端点 IP 地址
+        local 1.2.3.4           # 隧道本地端点 IP 地址，必须是公网 IP
+        ttl 255                 # 指数据包被路由器丢弃之前，最大的跳跃次数，1~255 之间的值， 0 表示继承原来数据包的 TTL 
+        dev ens-33              # 表示数据包从 ens-33 这个网卡发送
+
+shell> ip tunnel delete myTunnelName        # 删除隧道

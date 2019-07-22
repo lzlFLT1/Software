@@ -1,0 +1,92 @@
+MongoDB 下载： 
+    https://www.mongodb.com/download-center/enterprise， 
+    Version: 选最新的
+    OS: 选你需要安装 MongoDB 的操作系统
+    Package： 选 ZIP
+    解压下载的 zip 文件，并放到 D:/MongoDB/mongodb-win32-x86_64-enterprise-windows-64-4.0.6， 一下称该目录为 MongoDB 根目录
+
+手工创建必要文件及目录：
+    D:/MongoDB/Data     # 数据保存目录
+    D:/MongoDB/Log/mongodb.log      # 日志保存文件
+    D:/MongoDB/Conf/mongodb.conf     # 启动配置文件，使用该方式命令行不用带参数
+        配置文件内容：
+            dbpath = D:\MongoDB\Data                        # 配置数据保存目录 
+            logpath = D:\MongoDB\Log\mongodb.log            # 配置日志保存文件
+            logappend = true                                # 表示以追加的形式写日志文件
+            directoryperdb = true                           # 表示每个数据库数据保存在独立的文件夹下
+            port = 27017                                    # 表示 MongoDB 服务端启动的端口号，不配默认 27017
+            bind_ip_all = true                              # 表示任何 ip 地址都可以访问本服务
+            auth = false                                    # 是否开启基于 RBAC 的访问控制策略，配置 MongoDB 系统管理员之后，需要修改为 enable，然后重启服务   
+
+配置环境变量：
+    新建环境变量 MONGODB_BIN = D:/MongoDB/mongodb-win32-x86_64-enterprise-windows-64-4.0.6/bin
+    Path 追加 %MONGODB_BIN%
+
+查看命令帮助：
+    cmd -> shell> mongod --help
+
+启动 MongoDB 服务端：
+    管理员权限运行 cmd
+    
+    # 初次运行： ，，将该命令配置为 windows 服务，服务名称为 MongoDB
+    # --dbpath "D:\MongoDB\Data"     配置数据保存目录
+    # --logpath "D:\MongoDB\Log\mongodb.log"    配置日志保存文件
+    # --logappend 表示以追加的形式写日志文件
+    # --directoryperdb 表示每个数据库数据保存在独立的文件夹下
+    # --port 1234   表示修改默认服务端口为 1234，一般不带该参数
+    # --install 表示将此条命令配置为 windows 服务
+    # --serviceName "MongoDB"  windows 服务名称为 MongoDB   
+    -> shell> mongod.exe --dbpath "D:\MongoDB\Data" --logpath "D:\MongoDB\Log\mongodb.log" --logappend --directoryperdb --port 1234 --install --serviceName "MongoDB" 
+    
+    -> shell> mongod -f D:\MongoDB\Conf\mongodb.conf --install --serviceName "MongoDB"  # 配置文件方式启动服务端
+    
+    
+    # 二次运行
+    shell> net start MongoDB        # 启动服务
+    shell> net stop mongodb     # 停止服务
+    shell> sc.exe delete MongoDB        # 删除 MongoDB 服务
+
+
+启动 MongoDB 客户端：
+    管理员权限运行 cmd -> mongo.exe localhost:27017/admin  # 启动客户端 以 admin 用户连接本机 27017 端口的 MongoDB 服务端
+    
+    
+配置 MongoDB 数据库管理系统(DBMS)管理员： MongoDB 默认是不需要认证就能读写任何数据库
+    MongoDB Enterprise > use admin;         # 切换到 admin 数据库，admin 数据库是 MongoDB 自带数据库
+    
+    # 在 admin 数据库创建一个 DBMS 管理员用户 
+    # 用户名： "MongoDBRoot"
+    # 密码： "1234"
+    # 角色： 
+    #   1. admin 数据库中新增 "userAdminAnyDatabase" 角色（固定名称），并分配给当前用户，该角色是 MongoDB 预定义的（只是初始没有创建，需要手工创建），该角色拥有 管理任何数据库用户 的权限     
+    #   2. 将用户分配到 "readWriteAnyDatabase" 角色中，该角色 MongoDB 自带，拥有读写任何数据库的权限
+    MongoDB Enterprise > db.createUser(     
+      {
+        user: "MongoDBRoot", 
+        pwd: "1234", 
+        roles: [ { role: "userAdminAnyDatabase", db: "admin" }, "readWriteAnyDatabase" ] 
+      }
+    )
+    
+    # 修改配置文件 auth = true 然后重启服务
+    
+    # 用刚才创建的用户登录
+    shell> mongo -u "MongoDBRoot" -p "1234" --authenticationDatabase "admin"        # 方式一
+    
+    shell> mongo 
+    MongoDB Enterprise > use admin
+    MongoDB Enterprise > db.auth("MongoDBRoot", "1234" )            # 方式二
+    
+修改用户密码：
+    db.updateUser(
+       "user123",
+       {
+          pwd: "KNlZmiaNUp0B",
+          customData: { title: "Senior Manager" }
+       }
+    )
+    
+    
+    
+    
+    

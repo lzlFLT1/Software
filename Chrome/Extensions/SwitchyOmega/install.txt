@@ -1,0 +1,11 @@
+离线安装(翻不了墙的情况)：
+    下载插件： 
+        打开：https://github.com/FelisCatus/SwitchyOmega 
+        查找 README.md 文件中 Releases Page 字样的链接，点击进入
+        下载最新版的 SwitchyOmega_Chromium.crx，目前（2019-04-01）最新版为 2.5.20
+        将 SwitchyOmega_Chromium.crx 文件扩展名改为 zip 并解压到 /tmp/SwitchyOmega_Chromium 目录下
+       
+    安装：
+        打开 Chrome -> 点击右上角三竖点菜单按钮 -> More Tools -> 开启右上角 Developer Mode 
+        -> 点击 Load unpacked -> 选择 /tmp/SwitchyOmega_Chromium 目录即可
+     

@@ -1,0 +1,17 @@
+# 服务的说明
+[Unit]
+Description=CHAN DAO Server         # 服务描述
+After=network.target                # 服务的类别
+After=syslog.target
+
+
+# 服务安装的相关设置，可设置为多用户
+[Install] 
+WantedBy=multi-user.target
+
+[Service]
+Type=forking                            # 服务的运行形式，forking 后台运行
+ExecStart=/opt/zbox/zbox start          # 服务 start 时，运行的命令
+ExecReload=/opt/zbox/zbox restart       # 服务 restart 时，运行的命令
+ExecStop=/opt/zbox/zbox stop            # 服务 stop 时，运行的命令
+PrivateTmp=True                         # 表示给服务分配独立的临时空间

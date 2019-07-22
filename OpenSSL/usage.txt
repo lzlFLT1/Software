@@ -1,0 +1,105 @@
+Query:
+    shell> openssl list-public-key-algorithms           # 列出所有支持的 不对称加密算法
+    shell> openssl list-cipher-algorithms               # 列出所有支持的 对称加密算法
+    shell> openssl list-message-digest-algorithms       # 列出所有支持的 消息摘要算法
+
+CA 目录结构
+    shell> ll /etc/pki/CA               # 该目录下存在以下文件及目录，如果没有手工创建
+        # certs         存放已颁发的证书
+        # newcerts      存放CA指令生成的新证书
+        # private       存放私钥
+        # crl           存放已吊销的证书
+        # index.txt     OpenSSL定义的已签发证书的文本数据库文件，这个文件通常在初始化的时候是空的
+        # serial        证书签发时使用的序列号参考文件，该文件的序列号是以16进制格式进行存放的，该文件必须提供并且包含一个有效的序列号
+    
+自建 CA：
+    # 列出所有支持的曲线
+    shell> openssl ecparam -list_curves    
+    
+    # 选择一条曲线生成密钥，包含公钥和私钥
+    shell> openssl ecparam -genkey -name secp256k1 -out ./root.pub.key.pem          
+    shell> openssl ec -text -in ./root.pub.key.pem                                   # 打印密钥对的组成和参数
+    
+    # 从密钥对中拆分出私钥
+    shell> openssl ec -in ./root.pub.key.pem -out ./root.key.pem                      
+    shell> openssl ec -text -in ./root.key.pem                                       # 打印私钥得到组成和参数
+    
+    # 从密钥对中拆分出公钥
+    shell> openssl pkey -pubout -in ./root.pub.key.pem -out ./root.pub.pem            
+    shell> openssl ec -text -pubin -in ./root.pub.pem                                # 打印公钥的组成和参数
+    
+    # 对文件的 消息摘要 进行 数字签名
+    # 数字签名：用私钥签，用公钥解
+    shell> openssl dgst -sha256 -sign ./root.key.pem -out ./dgstSignature.txt test.txt       # 先进行消息摘要，再对消息摘要签名
+    shell> openssl dgst -sha256 -verify ./root.pub.pem -signature ./dgstSignature.txt test.txt  # 先对原文进行消息摘要，对消息摘要进行验签
+    
+    
+    # 加密：用公钥加，用私钥解，此处会报错，因为 ECC 算法不能用来加解密
+    shell> openssl pkeyutl -encrypt -in ./test.txt -pubin -inkey ./root.pub.pem -out ./testEncrpt.txt     # 加密
+    shell> openssl pkeyutl -decrypt -in ./testEncrpt.txt -inkey ./root.key.pem -out ./testDecrpt.txt # 解密
+    
+ 
+    # 生成根证书请求文件 CSR (Certificate Signing Request, 证书签名请求)
+    shell> openssl req -new -key ./root.key.pem -out ./root.csr
+        输入：
+        Common Name: haku.kasei
+        其他全部： KH
+    
+    # 自签名一个 CA(Certificate Authority) 根证书文件 CRT 
+    shell> openssl x509 
+            -req 
+            -in ./root.csr 
+            -signkey ./root.key.pem 
+            -sha384 
+            -days 365 
+            -extensions v3_ca 
+            -out ./root.crt
+    
+    # 制作 Intermediate CRT 证书文件
+    shell> openssl ecparam -genkey -name secp256k1 -out ./inter.pub.key.pem      # 生成中间根密钥（公私钥）
+    shell> openssl ec -in ./inter.pub.key.pem -out ./inter.key.pem                # 拆分出私钥
+    shell> openssl pkey -pubout -in ./inter.pub.key.pem -out ./inter.pub.pem      # 拆分出公钥
+    shell> openssl req -new -key ./inter.key.pem -out ./inter.csr                 # 生成请求文件
+    shell> openssl x509                 # 使用根证书签名中间证书
+            -req 
+            -in ./inter.csr 
+            -CA ./root.crt
+            -CAkey ./root.key.pem 
+            -sha384
+            -days 300       # 必须比根证书小
+            -extensions v3_ca 
+            -out ./inter.crt  
+    
+    
+    # 制作 Server CRT 证书文件
+    shell> openssl ecparam -genkey -name secp256k1 -out ./server.pub.key.pem      # 生成中间根密钥（公私钥）
+    shell> openssl ec -in ./server.pub.key.pem -out ./server.key.pem             # 拆分出私钥
+    shell> openssl pkey -pubout -in ./server.pub.key.pem -out ./server.pub.pem      # 拆分出公钥
+    shell> openssl req -new -key ./server.key.pem -out ./server.csr                 # 生成请求文件
+    shell> openssl x509                 # 使用中间根证书签名服务器（用户）证书
+            -req 
+            -in ./server.csr 
+            -CA ./inter.crt 
+            -CAkey ./inter.key.pem  
+            -sha384
+            -days 200       # 必须比中间根证书小
+            -extensions v3_req 
+            -out ./server.crt  
+    
+    
+    # 模拟一个 TLS 服务端供客户端验证
+    shell> openssl s_server -accept 4433 -HTTP -cert ./server.crt -key ./server.key.pem
+    
+    # 浏览器地址栏中输入服务器 IP 及端口
+    https://[2001:470:18:1f0a::2]:4433/hello.html
+    
+    # 在浏览器上安装 Root CRT 和 Intermediate CRT，再次查看安全性
+    
+    
+    # 吊销证书, CRL(Certificate Revocation List) 文件
+    
+    
+    
+    
+
+

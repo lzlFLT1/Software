@@ -1,0 +1,23 @@
+IntelliJ IDEA 基本概念框架搭建 {
+
+    坑：工程创建之前保证所有必要的 plugin 都已经加载，File -> Settings -> Plugins -> 右侧窗口中所有 plugin 都应该加载
+
+	Project     =>  项目，工程；相当于 Eclipse 中的 workspace
+	
+	Module      =>  模块；相当于 Eclipse 中的 project
+	
+	Libraries   =>  当前项目依赖的 jar 包库
+	
+	Facets      =>  英文解释：某一方面；对于项目来说就是 “特征，特征面”
+	            =>  表示当前项目具有哪些特征，如：Hibernate Spring Web 等
+	            
+	Artifacts   =>  英文解释：手工制品；对于项目来说就是 “产物，产品”
+	            =>  表示当前 Module 要怎么打包，例如 war exploded、war、jar 打包形式；Module 打包后才能部署到服务器
+	            
+	项目路径结构：
+    project：项目名称，相当于 eclipse 中的 workspace
+    module：组件模块名称，相当于 eclipse 中的 project
+    
+    IDEA : e:/IdeaProjects/project_name/module_name
+    Eclipse: e:/WorkSpace/projcet  
+}

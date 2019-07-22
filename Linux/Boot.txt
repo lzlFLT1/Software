@@ -1,0 +1,6 @@
+# TODO 开机启动项配置
+function startupService(){   
+    假设自己的脚本为 wode.sh
+    cp ./wode.sh /etc/init.d/                                   # 把脚本放到init.d 目录下
+    ln -s /etc/init.d/wode.sh /etc/rc.d/rc[0-6].d/Swode.sh      # 在该目录下建立软连接，S开头的文件名表示开机自启动，K开头的表示加载时需要关闭
+}

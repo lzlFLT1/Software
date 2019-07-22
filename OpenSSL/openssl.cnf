@@ -1,0 +1,213 @@
+################################################################ todo 默认 section，一般没有名字，也可以自定义 section name
+# 默认段中定义一些公共的属性，当搜索指定 section name 时，先搜索有名字的段，如果配置匹配的 section name，然后才会搜索 default section
+HOME                    = .
+RANDFILE                = $ENV::HOME/.rnd           # 随机数种子文件，$ENV::HOME <=> 当前环境变量中的 HOME 变量
+oid_section             = new_oids
+
+
+# todo OID 配置，OID = Object Identifier 对象 IDS
+[ new_oids ]
+
+testoid1                = 1.2.3.4
+testoid2                = ${testoid1}.5.6
+
+# todo TSA 配置， TSA = Timestamp Authority 时间戳认证机构
+tsa_policy1 = 1.2.3.4.1
+tsa_policy2 = 1.2.3.4.5.6
+tsa_policy3 = 1.2.3.4.5.7
+
+[ ca ]
+default_ca              = default_ca                    # 引用 [ default_ca ] 的配置
+
+################################################################ todo 当前 CA 配置
+[ default_ca ]                          
+
+dir                     = /root/kasei/CA                # 证书认证机构根目录
+certificate             = $dir/cacert.pem               # 当前 CA 的根证书
+private_key             = $dir/private/cakey.pem        # 当前 CA 的密钥（包含公私钥）
+
+serial                  = $dir/serial                   # 当前 CA 序列号文件，可以设置初始值： shell> echo '01' > serial
+RANDFILE                = $dir/private/.rand            # 随机数种子文件
+unique_subject          = yes                           # no: 当前 CA 允许一个 subject 申请多个证书; yes: 当前 CA 一个 subject 只能申请一个证书
+database                = $dir/index.txt                # database index file.
+default_md              = sha256                        # 当前 CA 对文件进行 数字签名 时所使用的 消息摘要算法
+preserve                = no                            # keep passed DN ordering
+policy                  = policy_anything               # 引用 [ policy_anything ] 证书匹配策略
+
+                        
+# todo 证书文件配置       
+certs                   = $dir/certs                    # 当前 CA 已颁发的证书保存目录
+new_certs_dir           = $dir/newcerts                 # 当前 CA 新生成的证书保存目录
+default_days            = 365                           # 默认签署的证书文件有效期
+                                                    
+# todo 吊销列表配置                                   
+crlnumber               = $dir/crlnumber                # 当前 CA 吊销列表序列号
+crl                     = $dir/crl.pem                  # 当前 CA 的吊销列表
+crl_dir                 = $dir/crl                      # 当前 CA 已颁发的吊销列表保存目录
+default_crl_days        = 30                            # 默认 CA 颁发的吊销列表的有效期
+
+
+# todo 扩展项配置
+copy_extensions         = none                          # 生成证书时，扩展项的 copy 行为，value = [none, copy, copyall]; 简单使用时，建议设置为 none 
+x509_extensions         = crt_ext                       # 引用 [ crt_ext ] 添加到证书中的扩展项
+crl_extensions          = crl_ext                       # 引用 [ crl_ext ] 添加到证书吊销列表文件中的扩展项
+
+
+######## todo CA 策略配置
+[ policy_match ]
+countryName             = match                         # match 表示请求中填写的该字段信息要和 CA 证书中的匹配
+stateOrProvinceName     = match
+organizationName        = match
+organizationalUnitName  = optional                      # optional 表示该字段信息可提供可不提供
+commonName              = supplied                      # supplied 表示该字段信息必须提供
+emailAddress            = optional
+
+[ policy_anything ]
+countryName             = optional
+stateOrProvinceName     = optional
+localityName            = optional
+organizationName        = optional
+organizationalUnitName  = optional
+commonName              = supplied
+emailAddress            = optional
+
+
+
+######## todo CA 默认 中间根证书 扩展项配置
+[ proxy_cert_ext ]
+basicConstraints                = CA:FALSE
+nsCertType                      = client, email, objsign
+nsComment                       = "KaseiHaku Intermediate CA Certification"
+subjectKeyIdentifier            = hash
+authorityKeyIdentifier          = keyid,issuer
+subjectAltName                  = email:copy
+subjectAltName                  = email:move
+issuerAltName                   = issuer:copy
+proxyCertInfo                   = critical,language:id-ppl-anyLanguage,pathlen:3,policy:foo       # 中间（代理）证书必须的配置项
+
+######## todo CA 默认用户证书扩展项配置，这些扩展项会在 CA 签署证书请求的时候添加到证书文件中
+[ crt_ext ]
+basicConstraints                = CA:FALSE              # 该配置是为了避免将一个 用户证书 interpreting(解释) 为一个 CA 证书
+keyUsage                        = nonRepudiation, digitalSignature, keyEncipherment     # 客户端证书使用限制
+nsCertType                      = server, client, email, objsign    # Netscape(网景公司) 证书类型配置, 表示该证书可以用于任何东西的签名认证，包括 object
+nsComment                       = "KaseiHaku User  Certification"   
+subjectKeyIdentifier            = hash
+authorityKeyIdentifier          = keyid,issuer
+subjectAltName                  = email:copy
+subjectAltName                  = email:move
+
+######## todo 添加到证书吊销列表文件中的扩展项
+[ crl_ext ]
+issuerAltName                   = issuer:copy
+authorityKeyIdentifier          = keyid:always
+
+
+
+################################################################ todo 证书请求文件配置
+[ req ]
+default_md                      = sha384                        # 证书请求文件的默认 消息摘要 算法
+default_keyfile                 = privkey.pem                   # 默认新建私钥的保存位置
+distinguished_name              = req_distinguished_name        # DN = Distinguish Name; 证书请求文件的唯一性标识
+                                                               
+x509_extensions                 = v3_root_ca_req                # 加入到自签名证书请求文件中的扩展项
+req_extensions                  = v3_user_crt_req               # 加入到普通证书请求文件中的扩展项
+string_mask                     = utf8only
+
+
+######## todo 添加到证书请求文件中的 subject 信息配置
+[ req_distinguished_name_root_ca_req ]
+countryName                     = Country Name (2 letter code)                              # 国家名
+countryName_default             = KH                                                        # 默认国家名
+countryName_min                 = 2                                                         # 国家名最小长度
+countryName_max                 = 2                                                         # 国家名最大长度
+stateOrProvinceName             = State or Province Name (full name)                        # 省份名
+stateOrProvinceName_default     = KH                                                        # 默认省份名           
+localityName                    = Locality Name (eg, city)                                  # 城市名
+localityName_default            = KH                                                        # 默认城市名
+0.organizationName              = Organization Name (eg, company)                           # 公司名
+0.organizationName_default      = KH                                                        # 默认公司名
+organizationalUnitName          = Organizational Unit Name (eg, section)                    # 部门名
+organizationalUnitName_default  = KH                                                        # 默认部门名
+commonName                      = Common Name (eg, your name or your server\'s hostname)    # 域名 = rootca.haku.kasei
+commonName_max                  = 64                                                        # 最大域名长度
+emailAddress                    = Email Address                                             # 邮箱地址 = kasei@haku.kasei
+emailAddress_max                = 64                                                        # 最大邮箱地址长度
+
+
+[ req_distinguished_name_intermediate_ca_req ]
+countryName                     = Country Name (2 letter code)                              # 国家名
+countryName_default             = KH                                                        # 默认国家名
+countryName_min                 = 2                                                         # 国家名最小长度
+countryName_max                 = 2                                                         # 国家名最大长度
+stateOrProvinceName             = State or Province Name (full name)                        # 省份名
+stateOrProvinceName_default     = KH                                                        # 默认省份名           
+localityName                    = Locality Name (eg, city)                                  # 城市名
+localityName_default            = KH                                                        # 默认城市名
+0.organizationName              = Organization Name (eg, company)                           # 公司名
+0.organizationName_default      = KH                                                        # 默认公司名
+organizationalUnitName          = Organizational Unit Name (eg, section)                    # 部门名
+organizationalUnitName_default  = KH                                                        # 默认部门名
+commonName                      = Common Name (eg, your name or your server\'s hostname)    # 域名 = interca.haku.kasei
+commonName_max                  = 64                                                        # 最大域名长度
+emailAddress                    = Email Address                                             # 邮箱地址 = kasei@haku.kasei
+emailAddress_max                = 64                                                        # 最大邮箱地址长度
+
+
+
+[ req_distinguished_name_user_crt_req ]
+countryName                     = Country Name (2 letter code)                              # 国家名
+countryName_default             = KH                                                        # 默认国家名
+countryName_min                 = 2                                                         # 国家名最小长度
+countryName_max                 = 2                                                         # 国家名最大长度
+stateOrProvinceName             = State or Province Name (full name)                        # 省份名
+stateOrProvinceName_default     = KH                                                        # 默认省份名           
+localityName                    = Locality Name (eg, city)                                  # 城市名
+localityName_default            = KH                                                        # 默认城市名
+0.organizationName              = Organization Name (eg, company)                           # 公司名
+0.organizationName_default      = KH                                                        # 默认公司名
+organizationalUnitName          = Organizational Unit Name (eg, section)                    # 部门名
+organizationalUnitName_default  = KH                                                        # 默认部门名
+commonName                      = Common Name (eg, your name or your server\'s hostname)    # 域名 = 1291114093.ml
+commonName_max                  = 64                                                        # 最大域名长度
+emailAddress                    = Email Address                                             # 邮箱地址 = master@1291114093.ml
+emailAddress_max                = 64                                                        # 最大邮箱地址长度
+
+
+
+######## todo 添加到自签名证书请求文件中的扩展项
+[ v3_root_ca_req ]
+basicConstraints                = CA:true
+subjectKeyIdentifier            = hash
+authorityKeyIdentifier          = keyid:always,issuer
+keyUsage                        = cRLSign, keyCertSign          # 使用该项表示该证书只能当作 CA 证书，而不能当作 自签名证书
+nsCertType                      = sslCA, emailCA                # 该想表示该证书只能当作 CA 证书，不能当作 自签名证书
+subjectAltName                  = email:copy
+issuerAltName                   = issuer:copy
+
+
+[ v3_inter_ca_req ]
+basicConstraints                = CA:true
+subjectKeyIdentifier            = hash
+authorityKeyIdentifier          = keyid:always,issuer
+keyUsage                        = cRLSign, keyCertSign          # 使用该项表示该证书只能当作 CA 证书，而不能当作 自签名证书
+subjectAltName                  = email:copy
+issuerAltName                   = issuer:copy
+
+
+
+######## todo 添加到用户证书请求文件中的扩展项
+[ v3_user_crt_req ]
+basicConstraints                = CA:FALSE
+keyUsage                        = nonRepudiation, digitalSignature, keyEncipherment
+subjectAltName                  = @v3_user_crt_req_subject_alt_names
+
+[ v3_user_crt_req_subject_alt_names ]
+DNS.1                           = 1291114093.ml
+DNS.2                           = www.1291114093.ml
+DNS.3                           = *.1291114093.ml
+IP.1                            = 192.168.1.1
+IP.2                            = 192.168.69.14
+EMAIL.1                         = master@1291114093    
+
+
+

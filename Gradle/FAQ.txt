@@ -1,0 +1,12 @@
+Question 
+    执行 gradlew 命令，老是重新下载 gradle
+Cause 
+    gradlew 为了保证项目的正常使用，会使用项目配置文件（gradle/wrapper/gradle-wrapper.properties）中定义的 gradle 版本，url 不同也认为是不同的‘版本’
+    distributionUrl=https\://services.gradle.org/distributions/gradle-4.10-bin.zip  // 该参数表示项目预期的 gradle 版本 
+    
+    gradlew 会把相应的版本下载到 %GRADLE_USER_HOME%/wrapper/dists/gradle-版本-[all|bin].zip/md5hash/ 目录下，并使用该版本
+Resolve
+    手动下载相应的版本放到上述目录下，bin 和 all 的区别就是有没有带源码。
+    
+    
+    

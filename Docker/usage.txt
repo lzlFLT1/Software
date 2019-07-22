@@ -1,0 +1,77 @@
+CentOS7:
+    启动 Docker：
+        shell> systemctl list-unit-files | grep docker
+        shell> systemctl start docker.service
+    设置开机自启动：
+        shell> systemctl enable docker.service
+        
+    Information：
+        shell> docker                                   # 查看 docker 命令的帮助
+        shell> docker images --help                     # 二级命令帮助
+        shell> docker version                           # 查看 Docker 版本
+        shell> docker info
+    
+    镜像：
+        shell> docker images                            # 列出本地所有镜像
+        shell> docker search centos                     # 从 Docker Hub 中查找镜像
+        shell> docker pull centos:7.6.1810              # 获取一个新镜像
+        
+        # 从已有容器中创建一个新的镜像
+        # shell> docker commit -m "注释" -a “作者" 模板容器ID  镜像名称
+        shell> docker commit -m="has update" -a="kasei" e218edb10161 kasei/centos:haku   
+        
+        # 从零开始创建一个镜像
+        shell> touch Dockerfile     # 创建 Dockerfile 并编辑内容        
+        # shell> docker build 目标镜像名称  "Dockerfile 所在目录路径"
+        shell> docker build kasei/centos:haku .
+        
+        # 设置镜像标签
+        shell> docker tag 镜像ID 用户ID/仓库名:标签名
+    
+    容器生命周期管理：
+        shell> docker create                                # 创建一个容器，但不运行，其他参数跟 run 一样
+        shell> docker rm containerId                        # 删除一个容器实例
+    
+        shell> docker start container1 container2           # 动一个或多个已经被停止的容器
+        shell> docker stop container1 container2            # 停止运行中的容器
+        shell> docker restart container1 container2         # 重启容器
+        
+        shell> docker pause container1 container2           # 暂停容器中所有的进程
+        shell> docker unpause container1 container2         # 恢复容器中所有的进程
+        
+        shell> docker kill -s KILL mysql                    # 杀死容器中的 mysql 进程
+        
+        # 在容器内部执行一条命令
+        shell> docker exec -d containerId /bin/bash
+        shell> docker exec -it containerId /bin/bash
+        
+        # 运行一个容器
+        shell> docker run hello-world:latest                # 以 hello-world 镜像为模型，创建一个容器实例
+        shell> docker run centos:7.6.1810 /bin/bash         # 创建容器实例，并运行命令 /bin/bash
+        shell> docker run -t -i centos:7.6.1810 /bin/bash   # -i 允许与容器的标准输入进行交互; -t 在容器里指定一个伪终端或终端
+        shell> docker run -d centos:7.6.1810 /bin/bash      # -d 后台启动容器
+        sehll> docker run -P centos:7.6.1810 /bin/bash      # -P 将容器内部使用的网络端口映射到我们使用的主机上
+        shell> docker run -d -p 5000:5000 centos:7.6.1810   # -p 将容器的端口映射到主机指定的端口
+        shell> docker run --name haku centos:7.6.1810       # 命名一个容器实例
+
+        
+
+    # 容器操作
+        shell> docker ps                                    # 查看当前正在运行的容器
+        shell> docker port containerId                      # 查看容器运行
+        shell> docker logs containerId                      # 查看容器内的标准输出的内容
+        shell> docker top containerId                       # 查看容器内部运行的进程
+        shell> docker inspect containerId                   # 查看 Docker 底层信息
+        
+        
+        
+        
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,218 @@
+/** todo V2ray 终极连招：Vmess + HTTP2 + TLS + CDN  */
+{
+  "log": {
+    "loglevel": "warning"
+  },
+  "dns": {
+    "hosts": {
+      "baidu.com": "127.0.0.1"
+    },
+    "servers": [
+      {
+        "address": "1.2.3.4",
+        "port": 5353,
+        "domains": [
+          "domain:v2ray.com"
+        ]
+      },
+      "8.8.8.8",
+      "8.8.4.4",
+      "localhost"
+    ],
+    "clientIp": "1.2.3.4",  // 本机 ip ，必须是公网 ip
+    "tag": "dns_inbound"
+  },
+  "inbounds": [
+    {
+      "tag": "vmess-in",
+      "protocol": "vmess",
+      "port": 12345,
+      "listen": "0.0.0.0",
+      "settings": {
+        "clients": [
+          {
+            "id": "1d8ebdc2-b01c-4c1c-aa28-40ad5f43e1cc",
+            "level": 0,
+            "alterId": 4,
+            "email": "kasei@kasei.com"
+          }
+        ],
+        "detour": {
+          "to": "another_inbound_tag"
+        },
+        "default": {
+          "level": 0,
+          "alterId": 4
+        },
+        "disableInsecureEncryption": true
+      },
+      "sniffing": {
+        "enabled": false,
+        "destOverride": [ // 当输入的流量是当前（vmess）协议的流量时，使用当前列表中的协议进行封装
+          "http",
+          "tls"
+        ]
+      },
+      "allocate": {  // 当监听的端口有多个时，使用该配置表明到底监听哪写端口
+        "strategy": "always",
+        "refresh": 5,
+        "concurrency": 3
+      },
+    },
+    /** todo 使用 HTTP2 */
+    {
+      "tag": "http2-vmess-in",
+      "protocol": "vmess",
+      "port": 12345,
+      "settings": {
+        "clients": [
+          {
+            "id": "b831381d-6324-4d53-ad4f-8cda48b30811",
+            "alterId": 64
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "http", 
+        "httpSettings": { //此项是关于 HTTP/2 的设置
+          "path": "/ray"
+        },
+        "security": "tls", // 配置tls
+        "tlsSettings": {
+          "certificates": [
+            {
+              "certificateFile": "/etc/v2ray/v2ray.crt", // 证书文件，详见 tls 小节
+              "keyFile": "/etc/v2ray/v2ray.key" // 密钥文件
+            }
+          ]
+        }
+      }
+    },
+    /** todo 使用 Websocket */
+    {
+      "tag": "websocket-vmess-in",
+      "protocol": "vmess",
+      "port": 12345,
+      "settings": {
+        "clients": [
+          {
+            "id": "b831381d-6324-4d53-ad4f-8cda48b30811",
+            "alterId": 64
+          }
+        ]
+      },
+      "streamSettings": {
+        "network":"ws",
+        "wsSettings": {
+          "path": "/",
+          "headers": {
+            "Host": "www.1291114093.ml"
+          }
+        },
+      }
+    },
+    /** todo 使用 TCP 传输， HTTP 伪装， TLS 加密 */
+    {
+      "tag": "tcp-http-feign-tls-vmess-in",
+      "protocol": "vmess",
+      "port": 12345,
+      "listen": "0.0.0.0",
+      "settings": {
+        "clients": [
+          {
+            "id": "1d8ebdc2-b01c-4c1c-aa28-40ad5f43e1cc",
+            "level": 0,
+            "alterId": 4,
+            "email": "kasei@kasei.com"
+          }
+        ],
+        "disableInsecureEncryption": true
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "tls",
+        "tlsSettings": {
+          "serverName": "www.1291114093.ml",
+          "alpn": ["http/1.1"],
+          "allowInsecure": false,
+          "allowInsecureCiphers": false,
+          "disableSystemRoot": false,
+          "certificates": [
+            {
+              "usage": "encipherment",
+              "certificateFile": "/path/to/certificate.crt",
+              "keyFile": "/path/to/key.key",
+            }
+          ]
+        },
+        "tcpSettings": {
+          "header": { // http 伪装配置，必须保证客户端和服务端配置一致，服务端只需配 response 客户端只需配 request
+            "type": "http", 
+            "response": {
+              "version": "1.1",
+              "status": "200",
+              "reason": "OK",
+              "headers": {
+                "Content-Type": ["application/octet-stream", "video/mpeg"],
+                "Transfer-Encoding": ["chunked"],
+                "Connection": ["keep-alive"],
+                "Pragma": "no-cache"
+              }
+            }
+          }
+        },
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "tag": "freedom-out",
+      "protocol": "freedom",
+      "sendThrough": "0.0.0.0",      // 主机有多个 IP 时，使用指定的 IP 发送数据
+      "settings": {
+        "domainStrategy": "AsIs",
+        "userLevel": 0
+      }
+    }
+  ],
+  "routing": {
+    "domainStrategy": "IPIfNonMatch",
+    "rules": [
+      {
+        "type": "field",
+        "network": "tcp,udp",
+        "inboundTag": [
+          "tag-vmess"
+        ],
+        "balancerTag": "freedom-out"
+      }
+    ]
+  },
+  "transport": {    // 全局传输方式配置，用于配置底层传输封装，可以使用 streamSettings 配置每一个 inbound 和 outbund 的传输方式
+    "tcpSettings": {},
+    "kcpSettings": {},
+    "wsSettings": {},
+    "httpSettings": {},
+    "dsSettings": {},
+    "quicSettings": {}
+  },
+  "policy": {
+    "levels": {
+      "0": {    // 根据用户等级选择不同的 策略
+        "handshake": 4,
+        "connIdle": 300,
+        "uplinkOnly": 2,
+        "downlinkOnly": 5,
+        "statsUserUplink": false,
+        "statsUserDownlink": false
+      }
+    },
+    "system": {
+      "statsInboundUplink": false,
+      "statsInboundDownlink": false
+    }
+  },
+  // "api": {},  // 用于远程调用
+  // "stats": {},   // 用于统计数据
+}
+

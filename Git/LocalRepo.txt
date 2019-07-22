@@ -1,0 +1,61 @@
+# 创建本地仓库
+    shell> git init         # 初始化一个本地仓库
+    shell> git clone git@github.com:KaseiHaku/RemoteRepository.git # 从远程库中克隆一个到本地库，会在当前目录下创建一个远程仓库的文件夹
+
+# 删除本地仓库
+    直接删除本地仓库中的 .git 文件夹 即可，删除之后，该仓库就是普通文件夹，没有版本控制功能了
+
+# 远程库信息查询
+    shell> git remote -v        # 查看当前本地库关联的远程库
+    
+# 远程库配置
+    shell> git remote add origin url        # 为本地库添加一个名为 origin 的远程库关联
+    shell> git remote remove origin         # 删除一个远程库关联
+
+# 远程库数据交互
+    shell> git remote -t branch1 -t branch2     # 只抓取指定的分支到本地库
+    shell> git remote --mirror=fetch            # 从 远程库 fetch 所有内容覆盖 本地库
+    shell> git remote --mirror=push             # 从 本地库 push 所有内容覆盖 远程库
+    shell> git remote --tags                    # 从远程库导入所有 tag 到本地库
+    shell> git remote prune origin              # 修剪 origin 远程库 陈旧(stale) 的分支
+    shell> git remote --dry-run                 # 仅执行命令，并打印输出，但是不执行实际的操作，用户查看当前命令会做哪些操作
+    
+# 从远程库 fetch 内容到本地
+# @trap 虽然 本地库分支 和 远程库分支 做了关联，但是在 本地库中，还是显示两个分支的 分别是 master 和 remote/origin/master
+    shell> git fetch origin         # 拉取 origin 远程库中的所有分支到本地
+    shell> git fetch origin master      # 拉取 origin 远程库中的 master 分支到本地 master 分支
+    shell> git fetch origin remoteBranch:localBranch      # 拉取 origin 远程库中的 remoteBranch 分支到本地的 localBranch 分支
+    shell> git fetch --force origin         # 强制覆盖本地库
+    shell> git fetch --prune origin         # 修剪所有远程库中不存在的本地分支           
+    shell> git fetch --dry-run --prune origin         # Show what would be done, without making any changes 
+
+# 将本地库的内容 push 到远程库
+    shell> git push origin -all     # 推送所有分支
+    shell> git push origin localBranch:remoteBranch     # 将本库的 localBranch 分支的更新推送到 origin 远程库的 remoteBranch 分支上
+    shell> git push --set-upstream origin localBranch:remoteBranch      # 推送更新的同时，将本地库的 localBranch 分支，关联到 origin 远程库的 remoteBranch 分支上
+    shell> git push --force origin localBranch:remoteBranch     # 强制覆盖远程库分支内容
+    shell> git push --prune origin localBranch:remoteBranch     # 修剪所有本地库中不存在的远程分支 
+    shell> git push --dry-run -prune origin localBranch:remoteBranch       # Show what would be done, without making any changes
+
+
+# 查看本地库提交历史
+    # 配置 git log 打印格式 及 日期显示格式，具体参考官方文档
+    shell> git log --pretty=format:"[%h][%t][%p][%an:%ae:%ad][%cn:%ce:%cd][%s]" --date=format:"%Y-%m-%d %H:%M:%S %z"
+
+    # --pretty=oneline      单行显示
+    # --abbrev-commit       仅显示 SHA-1 的前几个字符，而非所有的 40 个字符
+    # --graph               图形结构显示
+    # --decorate=short      显示该次 commit 对应的分支 或 Tag 信息
+    shell> git log --pretty=oneline --abbrev-commit --graph --decorate=short   
+    
+    # commit 过滤
+    shell> git log -- foo.py bar.py         # 按文件过滤 commit
+    
+# git commit 每次提交变动查看
+    shell> git log -p         # 显示每次提交的差异
+    shell> git log -p --word-diff -U4  # 显示每次提交的差异，并打印哪里的文本被改变了， -U4 表示打印修改文本的上下文，为前后 4 行上下文
+
+# 版本回退
+    shell> git reset --hard HEAD^                   # HEAD^ 上个版本， HEAD^^ 上上个版本， HEAD~100 上100个版本
+    shell> git reset --hard [commit id]             # 指定回到未来某个版本 
+

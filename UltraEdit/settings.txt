@@ -1,0 +1,19 @@
+1. 设置不备份
+    Advanced > Settings > Navigate > File handling > Backup 
+    > Backup files on save 下面选择 No backup
+    
+2. 设置 tab 缩进距离 及 替换 tab 为空格
+    Advanced > Settings > Editor > Word wrap/tab settings 
+    > 点击 Change list... 按钮 > 输入应用当前配置的文件扩展名，比如 json > 点击 Add 按钮 > 点击 OK 完成
+    > 勾选 Use spaces in place of tabs
+    > Tab stop value = 2
+    > Indent spaces = 2
+    > 勾选 Default word wrap on for each file
+    > 点击 Font... 按钮配置当前文件类型的字体
+    
+
+3. 设置新文件编码格式为 UTF-8
+    Advanced > Settings > File handling > Encoding 
+    > Default encoding 设置为 UTF-8
+    > Default code page 设置为 936(ANSI/OEM - Simplified Chinese GBK)
+    > Locale 设置为 en-US,English(United States)

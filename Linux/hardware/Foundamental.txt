@@ -1,0 +1,24 @@
+# 预备知识
+    linux 所有硬件都虚拟为一个文件，并保存在 /dev 目录下
+    
+    linux 硬件分为三类： 字符设备、块设备、网络设备
+    
+    linux 系统唯一标识一个硬件的方法：
+        设备文件名 + 主、从设备号
+        /dev/hd[a-d]: IDE硬盘。       
+        /dev/sd[a-p]: SCSI/SATA/USB硬盘或U盘。
+        /dev/lp[0-2]: 25针接口打印机。       
+        /dev/mouse: 当前鼠标。
+        /dev/cdrom: 当前CD/DVD ROM
+        /dev/usb/mouse[0-15]: USB接口鼠标。
+        
+#### Hard Disk
+    分区方式：
+        其中 BIOS 和 UEFI 都是最最基础的硬件操作系统
+        其中 MBR 和 GPT 是分区格式，MBR 最多能分 4 个，GPT 最多 128 个
+        BIOS + MBR: Deprecated
+        UEFI + GPT:       
+        
+    文件系统格式：
+        Windows: FAT(Deprecated), NTFS
+        Linux: Ext4, XFS(Trending)

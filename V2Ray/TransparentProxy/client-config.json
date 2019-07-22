@@ -1,0 +1,101 @@
+{
+  "log": {
+    "loglevel": "debug"
+  },
+  "routing": {
+    "domainStrategy": "IPIfNonMatch",
+    "rules": [
+      {
+        "type": "field",
+        "network": "tcp,udp",
+        "inboundTag": ["DokodemoDoorIn"],
+        "protocol":["http", "tls", "bittorrent"],
+        "outboundTag": "CdnTlsWsVmessOut"
+      }
+    ],
+    "balancers": []
+  },
+  "inbounds": [
+    {
+      "tag": "DokodemoDoorIn",
+      "protocol": "dokodemo-door",
+      "port": 1080,
+      "listen": "0.0.0.0",      
+      "settings": {
+        "network": "tcp,udp",
+        "timeout": 0,
+        "followRedirect": true,   // 这里要为 true 才能接受来自 iptables 的流量
+        "userLevel": 0
+      },
+      "streamSettings": {
+        
+      },     
+      "sniffing": {
+        "enabled": true,      // 透明代理必须开启
+        "destOverride": ["http", "tls"]
+      },
+      "allocate": {
+        "strategy": "always",
+        "refresh": 5,
+        "concurrency": 3
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "tag": "CdnTlsWsVmessOut",
+      "protocol": "vmess",
+      "sendThrough": "0.0.0.0",     // 主机有多个 ip 时，使用指定 ip 发送数据
+      "settings": {
+        "vnext": [
+          {
+            "address": "www.1291114093.ml",
+            "port": 443,
+            "users": [
+              {
+                "id": "bb553e11-f08b-e87a-0779-*****a7e1c",
+                "security": "chacha20-poly1305",
+                "alterId": 64,
+                "level": 0
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "security": "tls",
+        "tlsSettings": {
+          "serverName": "www.1291114093.ml",
+          "allowInsecure": true,
+          "allowInsecureCiphers": true,
+          "alpn": ["http/1.1"],
+          "certificates": [
+            {
+              "usage": "verify",
+              "certificate": [
+                  "-----BEGIN CERTIFICATE-----",
+                  "-----END CERTIFICATE-----"
+              ]
+            }
+          ],
+          "disableSystemRoot": false
+        },
+        "tcpSettings": {
+          "header": {
+            "type": "none"
+          }
+        },
+        "wsSettings": {
+          "path": "/",
+          "headers": {}
+        },
+        "sockopt": {
+          "mark": 255, //这里是 SO_MARK，用于 iptables 识别，每个 outbound 都要配置；255可以改成其他数值，但要与下面的 iptables 规则对应；如果有多个 outbound，最好奖所有 outbound 的 SO_MARK 都设置成一样的数值
+          "tcpFastOpen": false,
+          "tproxy": "tproxy"
+        } 
+      }
+    }
+  ]
+}

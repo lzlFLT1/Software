@@ -1,0 +1,285 @@
+{ 
+  "api": {},
+  "policy": {},
+  "stats": {},
+  
+  "log": {},
+  "dns": {
+    "hosts": {
+      "baidu.com": "127.0.0.1"
+    },
+    "servers": [
+      {
+        "address": "223.5.5.5",
+        "port": 53,
+        "domains": [
+          "geosite:cn",
+          "geosite:geolocation-cn",
+          "geosite:tld-cn",
+        ]
+      },
+      {
+        "address": "8.8.8.8",
+        "port": 53,
+        "domains": [
+          "geosite:google",
+          "geosite:facebook",
+          "geosite:geolocation-!cn",
+        ]
+      },
+      "223.6.6.6",
+      "8.8.4.4",
+      "localhost"
+    ],
+    "clientIp": "1.2.3.4",  // 本机 ip ，必须是公网 ip
+    "tag": "dns_inbound"
+  },  
+  
+  "inbounds": [
+    {
+      "tag": "vmess_in",
+      "protocol": "vmess",
+      "port": 1080,
+      "listen": "127.0.0.1",  
+      "settings": {
+        "clients": [
+        {
+          "id": "27848739-7e62-4138-9fd3-098a63964b6b",
+          "level": 0,
+          "alterId": 4,
+          "email": "love@v2ray.com"
+        }
+      ],
+      "default": {
+        "level": 0,
+        "alterId": 4
+      },
+      "detour": {
+        "to": "tag_to_detour"
+      },
+      "disableInsecureEncryption": false
+      },   
+      "sniffing": {
+        "enabled": false,
+        "destOverride": ["http", "tls"]
+      }
+    },
+    {
+      "tag": "socks_in",
+      "protocol": "socks",
+      "port": 1080,
+      "listen": "127.0.0.1",  
+      "settings": {
+        "auth": "noauth",
+        "accounts": [
+          {
+            "user": "my-username",
+            "pass": "my-password"
+          }
+        ],
+        "udp": false,
+        "ip": "127.0.0.1",
+        "userLevel": 0
+      },   
+      "sniffing": {
+        "enabled": false,
+        "destOverride": ["http", "tls"]
+      }
+    },
+    {
+      "tag": "shadowsocks_in",
+      "protocol": "shadowsocks",
+      "port": 1080,
+      "listen": "127.0.0.1",  
+      "settings": {
+        "email": "kasei@kasei.com",
+        "method": "chacha20-poly1305",
+        "password": "password",
+        "level": 0,
+        "ota": true,
+        "network": "tcp,udp"
+      },   
+      "sniffing": {
+        "enabled": false,
+        "destOverride": ["http", "tls"]
+      }
+    },
+    {
+      "tag": "http_in",
+      "protocol": "http",
+      "port": 1080,
+      "listen": "127.0.0.1",  
+      "settings": {
+        "accounts": [
+          {
+            "user": "my-username",
+            "pass": "my-password"
+          }
+        ],
+        "allowTransparent": false,
+        "userLevel": 0
+      },   
+      "sniffing": {
+        "enabled": false,
+        "destOverride": ["http", "tls"]
+      }
+    },
+    {
+      "tag": "dokodemo-door_in",
+      "protocol": "dokodemo-door",
+      "port": 1081,
+      "listen": "127.0.0.1",  
+      "settings": {
+        "address": "8.8.8.8",
+        "port": 53,
+        "network": "tcp,udp",
+        "followRedirect": false,
+        "userLevel": 0
+      },   
+      "sniffing": {
+        "enabled": false,
+        "destOverride": ["http", "tls"]
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "tag": "vmess_out",
+      "protocol": "vmess",
+      "sendThrough": "0.0.0.0", 
+      "settings": {
+        "vnext": [
+          {
+            "address": "34.23.235.77",
+            "port": 37192,
+            "users": [
+              {
+                "id": "27848739-7e62-4138-9fd3-098a63964b6b",
+                "alterId": 4,
+                "security": "auto",
+                "level": 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "tag": "socks_out",
+      "protocol": "socks",
+      "sendThrough": "0.0.0.0", 
+      "settings": {
+        "servers": [
+          {
+            "address": "2.3.4.5",
+            "port": 1234,
+            "users": [
+              {
+                "user": "test user",
+                "pass": "test pass",
+                "level": 0
+              }
+            ]
+          }
+        ]
+      },
+      "proxySettings": {
+        "tag": "another_outbound_tag_name"
+      }
+    },
+    {
+      "tag": "shadowsocks_out",
+      "protocol": "shadowsocks",
+      "sendThrough": "0.0.0.0", 
+      "settings": {
+        "servers": [
+          {
+            "email": "kasei@kasei.com",
+            "address": "66.98.122.202",
+            "port": 1234,
+            "method": "chacha20-poly1305",
+            "password": "password",
+            "ota": false,
+            "level": 0
+          }
+        ]
+      }
+    },
+    {
+      "tag": "dns_out",
+      "protocol": "dns",
+      "sendThrough": "0.0.0.0", 
+      "settings": {
+        "address": "1.1.1.1"
+      }
+    },
+    {
+      "tag": "freedom-out",
+      "protocol": "freedom",
+      "sendThrough": "0.0.0.0", 
+      "settings": {
+        "domainStrategy": "UseIP",
+        "userLevel": 0
+      }
+    },
+    {
+      "tag": "blackhole_out",
+      "protocol": "blackhole",
+      "sendThrough": "0.0.0.0", 
+      "settings": {
+        "response": {
+          "type": "http"
+        }
+      }
+    }
+  ],
+  "routing": {
+    "domainStrategy": "IPIfNonMatch",
+    "rules": [
+      {
+        "type": "field",
+        "domain": [
+          "baidu.com",
+          "qq.com",
+          "geosite:cn"
+        ],
+        "ip": [
+          "0.0.0.0/8",
+          "10.0.0.0/8",
+          "fc00::/7",
+          "fe80::/10",
+          "geoip:cn"
+        ],
+        "port": "53,443,1000-2000",
+        "network": "tcp",
+        "source": [
+          "10.0.0.1"
+        ],
+        "user": [
+          "love@v2ray.com"
+        ],
+        "inboundTag": [
+          "tag-vmess"
+        ],
+        "protocol":["http", "tls", "bittorrent"],
+        "attrs": "attrs[':method'] == 'GET'",
+        "outboundTag": "direct",
+        "balancerTag": "balancer-tag"
+      }
+    ],
+    "balancers": [
+      {
+        "tag": "balancer-tag",
+        "selector": ["outbound-tag", "vmess_out", "freedom_out"]
+      }
+    ]  
+  },
+  "transport": {
+    "tcpSettings": {},
+    "kcpSettings": {},
+    "wsSettings": {},
+    "httpSettings": {},
+    "dsSettings": {},
+    "quicSettings": {}
+  }
+}

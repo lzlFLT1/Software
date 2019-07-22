@@ -1,0 +1,143 @@
+/*************************************************** Eclipse 的配置及使用 **************************************************************************/
+
+1 Eclipse 配置编码格式 {
+	
+	1.1 Window - Preferences - General - WorkSpace - Text file encoding - Other=UTF-8
+	1.2 Window - Preferences - General - Content Types - 展开 Text 子树 - Java Source File - 在下面 Default encoding 输入框中输入UTF-8 - 点击 Update
+}
+
+
+2 常用快捷键 {
+	Ctrl+Shift+L		显示 eclipse 所有快捷键
+	Ctrl+1					自动修正
+	Ctrl+T					查看当前类的继承关系
+	ctrl+shift+H 			输入类名：查看类的继承关系
+	Ctrl+O					查看当前类的所有字段和方法
+	Ctrl+鼠标左键			查看当前类的源代码
+	Alt+/                   代码智能补充
+	Alt+Shift+a             列编辑
+	Ctrl+/					单行注释，取消注释
+	Ctrl+Shift+/			块注释
+	Ctrl+Shift+\			取消块注释
+	Ctrl+F					查找指定字符串，或指定的正则表达式匹配的字符串，常用正则表达式：匹配块注释：/\*{1,2}[\s\S]*?\*/   匹配行注释：//.*\r 匹配空行：^\s*\n
+}
+
+3 Debug {
+	
+	3.1 设置断点 {
+	
+		3.1.1 设置普通断点：在行首双击即可，删除断点同理
+		
+		3.1.2 设置条件断点：{
+			3.1.2.1 设置好普通断点 -> 右击断点 -> BreakPoint Properties -> 勾选 Conditional -> 在输入框中输入条件，格式就是if() 语句里面怎么写，这里就怎么写
+			3.1.2.2 设置好普通断点 -> 右击断点 -> BreakPoint Properties -> 勾选 Hit Count -> 输入次数 10 -> 程序会在第 10 次执行到该断点时停止
+		}
+		
+		3.1.3 设置异常断点：debug 视图中 -> Breakpoints 窗口中 -> 点击 "J!" 按钮 -> 弹出框中选中指定类型的异常，如：NullPointerException 即可 -> 程序会在遇到该异常时停止		
+	}
+	
+	3.2 设置观察点：当选定的变量被访问或者修改时暂停程序执行 {
+	
+		outline 视图 -> 选择一个类的成员变量右击 -> 选择 Toggle Watchpoint (切换观察点)
+	}
+	
+	3.3 查看表达式值：{
+		
+		3.3.1 选中表达式文本 -> Ctrl+Shift+I
+		3.3.2 expression 窗口 -> 点击 add new expression -> 输入要观察的变量或者表达式即可
+	}
+		
+	3.4 临时修改环境变量：run configuration -> environment 窗口 -> 添加临时生效的环境变量
+	
+	3.5 常用按钮 {
+		3.5.1 f5 - step into - 单步执行程序，遇到方法时进入 
+		3.5.2 f6 - step over - 单步执行程序，遇到方法时跳过
+		3.5.3 f7 - step return - 单步执行程序，从当前方法跳出
+		3.5.4 f8 - resume - 执行到下一个断点为止
+	}
+	
+	3.6 drop to frame:重新跳到调用堆栈中的方法的开始处重新执行，并且所有上下文变量的值也回到那个时候 {
+	
+		单击调试工具栏上的Drop to Frame按钮,或者直接单击右键–>Drop to Frame
+	}
+	
+	注意：1、debug结束后，在 breakpoints 视图清空所有断点；2、关闭运行debug的JVM，否则占内存
+}
+
+4 eclipse 中导入 dtd 文件实现 xml 自动提示 {
+	
+	4.1 查看 xml 文件头中的信息，如：<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+	4.2 网上下载 dtd 文件
+	4.3 导入 dtd 文件 {
+		4.3.1 window -> preferences -> xml-> xml catalog -> add
+		4.3.2 location = dtd 文件的本地位置
+		4.3.3 key type = Public ID  或 URI
+		4.3.4 key = -//mybatis.org//DTD Mapper 3.0//EN 或 http://mybatis.org/dtd/mybatis-3-mapper.dtd
+	}	
+}
+
+5 eclipse 中导入源码文件 {
+	右击项目 -> build path -> Configure Build Path... -> 进入 Java Build Path项 -> 选择Libraries选项卡
+	-> 选择并展开你要导入源码的jar包 -> 双击Source attachment:(None)
+	-> 选择External Folder -> 选择已经下载好的源码包
+}
+
+6 eclipse 设置文件类型关联 {
+	Window -> Preferences -> General -> Content Types -> Text -> HTML 
+	-> File associations 框右侧 Add... -> 输入 *.vm -> Apply 即可把 .vm 文件 html 代码语法高亮
+}
+
+7 eclipse 修改项目文件夹名字后需要操作的步骤 {
+	%path to workspace%\.metadata\.plugins\org.eclipse.core.resources\.projects\%project name%\.location
+	这个二进制文件中，修改路径，修改方式 UltraEdit 打开，二进制编辑模式，编辑
+}
+
+
+
+
+66666 个性化定制 eclipse {
+	
+	配置文件编码格式 {
+		Window -> Preferences -> General -> WorkSpace -> Text file encoding -> Other=UTF-8
+		Window -> Preferences -> General -> Content Types -> 展开 Text 子树 -> Java Source File -> 在下面 Default encoding 输入框中输入UTF-8 -> 点击 Update
+	}
+	
+	
+	配置代码自动提示 {
+		配置 java 代码自动提示 {
+			Windows -> Preferences -> Java -> Editor -> Content Assist -> Auto Activation 框中 -> Auto activation triggers for Java -> 修改为 "zjava"
+		}
+		
+		配置 js 代码自动提示 {
+			Windows -> Preferences -> JavaScript -> Editor -> Content Assist -> Auto activation triggers for JavaScript -> 修改为 "zjs"
+		}
+		
+		配置 html 代码自动提示 {
+			Windows -> Preferences -> Web -> HTML Files -> Editor -> Content Assist -> Prompt when these characters are inserted -> 修改为 "zhtml"
+		}
+		
+		导出个性化文件 {
+			File -> Export -> General -> Preferences -> 勾选 Export All -> To preference file:[导出文件保存位置] -> Finish
+		}
+		
+		编辑导出的个性化文件 {
+			UltraEdit 打开该文件 
+			-> Ctrl+F 查找 "zjava" -> 替换为 .abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 
+			-> Ctrl+F 查找 "zjs" -> 替换为 .abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
+			-> Ctrl+F 查找 "zhtml" -> 替换为 <=.abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
+			-> 保存
+		}
+		
+		重新导回个性化文件 {
+			File -> Import -> General -> Preferences -> 选择刚修改的个性化文件 
+		}
+		
+		配置 js Jquery 代码自动提示 {
+			下载 spket-1.6.23.zip -> 解压 -> eclipse 文件夹 -> plugins 和 features 两个文件夹 
+			-> 将这两个文件夹下的东西分别考到 %ECLIPSE%/plugins 和 %ECLIPSE%/features 文件夹中
+			-> 启动 Eclipse，在 window 中打开preferences，在左边会看到 Spket。
+			-> 打开 Spket 下的 JavaScript Profile ，点击 New，添加jQuery，选择右边的Add Library，选择jQuery1.x ，选择右边的Add File，找到jquery-1.x.js或jquery-1.x.min.js 
+		}
+	}
+
+}

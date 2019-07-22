@@ -1,0 +1,13 @@
+shell> ipset create vps hash:ip     # 创建一个名为 vps ，类型为 hash:ip 的 ipset
+shell> ipset destory vps            # 删除一个名为 vps 的 ipset
+
+# 持久化操作
+shell> ipset save > /etc/ipset.conf     # 将当前所有 ipset 信息持久化到 /etc/ipset.conf
+
+
+
+
+
+
+
+

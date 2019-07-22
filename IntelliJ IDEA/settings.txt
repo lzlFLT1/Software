@@ -1,0 +1,300 @@
+################################################## Intelligent IDEA Settings : Begin ####################################################
+Personalize Settings {
+
+    配置 IDEA Terminal 为 Git Bash {
+        File -> Settings -> Tools -> Plugins -> 搜索 Terminal -> 勾选 Terminal 插件
+        File -> Settings -> Tools -> Terminal -> Shell path = E:\Git\Git\bin\bash.exe -> 重启 IDEA
+    }
+    
+
+    项目编译时，不编译指定目录下的 .java 文件：{
+        File -> Project Structure... -> Project Settings -> Modules -> 选择指定的 Module -> Sources 选项卡 
+        -> 选中指定目录 -> 点击窗口上方 Mark as: Excluded 即可
+    }
+
+    代理配置（如果网页使用代理，name不配置代理将不能下载 jar 包）：{
+        File -> Settings -> Appearance & Behavior -> System Settings -> HTTP Proxy 
+        -> Manual proxy configuration 
+        -> [单选] HTTP 或 SOCKS   // 根据自己的代理类型选择， ShadowSocks 选择 SOCKS
+        -> 配置代理所需要的参数
+    }
+    
+    
+    字符集编码格式配置： {
+    
+        0. IDEA 启动编码设置： 打开IDEA安装目录找到 idea.exe.vmoptions 和 idea64.exe.vmoptions 文件， 分别在文件末尾加上 -Dfile.encoding=UTF-8
+    
+        1. 设置源码文件编码格式： {
+            File -> Settings -> Editor -> File Encodings 
+            -> Global Encoding : [UTF-8]
+            -> Project Encoding : [UTF-8]
+            -> Default encoding for properties files : [UTF-8]
+            -> [√勾选] Transparent native-to-ascii conversion  //识别原生 ASCII 并转换成 UTF-8
+            -> Create UTF-8 files : [with NO BOM]  // 巨神坑啊！！：如果勾选，那么 Chrome 识别不了该文件，造成乱码，所以 html 要带 BOM
+        }
+        
+        2. 执行 main 函数、控制台乱码 {
+            File -> Settings -> Build,Execution,Deployment -> Compiler -> Java Compiler
+            -> 设置 Additional command line parameters 选项为 -encoding utf-8 ，然后rebuild下，重新运行
+        }
+        
+        3. 运行tomcat时，控制台乱码 {
+            Run -> Edit Configurations... -> 选择当前项目的部署环境 Tomcat 或其他 —> Server -> VM options 设置为 -Dfile.encoding=UTF-8 ，重启tomcat
+        }
+    }
+    
+    
+    字体设置： {
+        1. 编辑器字体设置： {
+            File -> Settings -> Editor -> Font 
+            -> Font : [Consolas]
+            -> Size : [13]
+        }
+        
+        2. 控制台字体设置： {
+            字体设置： 
+            File -> Settings -> Editor -> Color Scheme -> Console Font 
+            -> [勾选] Use console font instead of the deafualt
+            -> Font = Consolas
+            -> Size = 13
+            -> Line spaceing = 1.0
+            -> Fallback font = Monospaced  如果主字体没有该符号的字型，则采用这个
+            
+            字体颜色设置： 
+            File -> Settings -> Editor -> Color Scheme -> Console Colors 
+            -> Scheme : [Darcula] 
+            => Console 
+            => Standard output 
+            => 右侧 Foregroud : [8C65BB]
+        }
+    }
+
+
+    JDK 配置： {
+        1. 平台 JDK {
+            File -> Project Structure... -> Platform Settings -> SDKs -> 添加本地 JDK 的安装目录
+        }
+
+        2. 项目 JDK {
+            File -> Project Structure... -> Project Settings -> Project => Project SDK => 点击 "New..." -> 选择本地 JDK 的安装目录 
+        }
+    }
+    
+
+    
+    配置代码自动补充不区分大小写 {
+        File -> Settings -> Editor -> General -> Code Completion => Case sensitive completion : [None]
+    }
+
+    修改代码模板 {
+        File -> Settings -> Editor -> Live Templates -> 展开 iterations -> 找到 iter -> 查看或修改模板，保存即可
+    }
+    
+    配置单行注释在代码前面，而不是在第一列 {
+        File -> Settings -> Editor -> Code Style -> Java -> Wrapping and Braces -> Keep when reformatting -> Comment at first column [不勾选]
+        
+        File -> Settings -> Editor -> Code Style -> Java -> Code Generation -> Comment Code 选项卡
+        -> [不勾选] Line conmment at first column 
+        -> [勾选] Add a space at comment start
+        -> [不勾选] Block comment at first column
+        
+    }
+    
+    
+    配置项目运行必要的插件{
+        File -> Settings -> Plugins -> 选择必要的插件 -> Install JetBrains plugins -> reboot Idea
+    }
+
+
+    配置 idea 运行前不检查其他类的错误 {
+        File -> Settings -> Build,Execution,Deployment -> Compiler -> Java Compiler 
+        -> Use Compiler: Eclipse
+        -> Eclipse Options 栏目下
+        -> [勾选] Generate debugging info
+        -> [勾选] Report use of deprecated features
+        -> [不勾选] Generate no warnnings
+        -> [勾选] Proceed on errors
+
+        Run -> Edit Configurations... -> Before launch：隐藏树下
+        -> 点击'+' -> 选择 Build, no error check -> 删除掉其他的 Build
+    }
+
+
+
+    配置 ideaVim 插件 {
+        File -> Settings -> Plugins -> 搜索 ideavim -> Browser in Repositories -> 找到 IdeaVim -> Install 即可
+
+        插件配置 {
+            File -> Settings -> Vim Emulate -> 解决快捷键冲突问题
+        }
+    }
+
+
+    为 web 应用创建虚拟目录 {
+        Run -> Edit Configurations... 
+        -> Tomcat Server 
+        -> Deployment 选项卡 
+        -> "+" 图标
+        -> External Source...
+        -> 选中存放上传文件的路径
+        -> Application context:[/upload]
+        -> 确定即可
+
+    }
+
+    配置快捷键 {
+        File -> Settings -> Keymap -> 点击右上角放大镜（按快捷键搜索）
+        -> Alt+/ 
+        -> 在筛选出的条目中双击或者右键 
+        -> 删除原来的绑定 
+        -> 然后再筛选找到 Ctrl+Space 对应的项 
+        -> 双击或右键添加快捷键 Alt+/ 
+        -> Apply  
+
+        同样方法配置：
+        Basic = Alt+/
+        SmartType = Ctrl+Alt+/
+    }
+
+
+    配置在 html 文件 <script> 标签中添加 html 代码不报错的设置 {
+        File -> Settings -> Editor -> Inspections -> HTML -> Malformed content of <script> tag [不勾选] -> Apply
+    }
+
+
+
+    配置 Maven ： {
+        关联配置：
+        File -> Settings -> Build,Execution,Deployment -> Build Tools -> Maven 
+        => Maven home directory : [Maven 安装目录]
+        => User settings files : [Maven 用户配置文件]
+        => Local repository : [Maven 本地仓库]
+
+        Maven 自动下载 Sources 和 Documentation 配置： 
+        File -> Settings -> Build,Execution,Deployment -> Build Tools -> Maven -> Importing
+        Automatically download: [勾选]Sources [勾选]Documentation
+    }
+
+
+    配置 Gradle {
+        File -> Settings -> Build,Execution,Deployment -> Build Tools -> Gradle
+        => [单选选中] Use local gradle distribution
+        => Gradle home : [Gradle 安装目录]
+        => Gradle JVM : [JDK 安装目录]
+    }
+
+    配置 Tomcat {
+        File -> Settings -> Build,Execution,Deployment -> Application Servers 
+        => 点击 "+" 图标 => 配置
+    }
+
+    配置自定义样板代码 {
+        File -> Settings -> Editor -> Live Templates -> "+" 图标 
+        => Template Group => [Customized] => OK  // 创建自定义模板组
+        => 选中 Coustomized 模板组 => "+" 图标 => Live Template
+        => Abbreviation : [输入缩写]
+        => Description : [输入描述]
+        => Template text : [输入生成文本]
+        => click 底部蓝色 Define
+        => 选择该样板适配的 content 类型
+        => Apply
+    }
+
+
+    配置 DTD 自动提示 {
+        File -> Settings -> Languages & Frameworks -> Schemas and DTDs
+        => External Schemas and DTDs
+        => "+" 图标
+        => URI : [xml 文件上部 <!DOcTYPE> 标签中的 URI]
+        => File : [下载好的 DTD 文件的 Path]
+    }
+
+
+    配置 IDEA 支持 ECMAScript 6 语法 {
+    
+        File -> Settings -> Languages & Frameworks -> JavaScript
+        => JavaScript language version: ECMAScript 6
+        => Apply
+              
+        File -> Other Settings -> Settings for New Projects... -> Languages & Frameworks -> JavaScript 
+        => JavaScript language version: ECMAScript 6
+        => Apply 
+    }
+
+
+
+
+    配置快捷键映射 {
+        File -> Settings -> Keymap ->
+    }
+
+    配置目录结构 {
+        树状目录窗口顶部"齿轮按钮" -> Flatten Packages / Compact Empty Middle Packages 两项不勾选 
+    }
+
+
+
+    配置显示行号 {
+        File -> Settings -> Editor -> General -> Appearance => [√勾选] Show line number
+    }
+
+
+
+    Editor Tabs {
+        File -> Settings -> Editor -> General -> Editor Tabs 
+        => [不勾选] Show tabs in single row// 配置多行显示 Tabs
+        => [不勾选] Hide tabs if there is no space// 配置多行显示 Tabs
+        => [勾选] Mark modified tabs with asterisk// 配置 * 标识修改过的文件
+    }
+
+    配置 Tab 键为 4 个空格 {
+        File -> Settings -> Editor -> Code Style 
+        -> {Java, HMTL, JavaScript, JSON, XML, Properties, CSS}
+        -> Tabs and Indents
+        -> [不勾选] Use tab character
+    }
+
+
+    配置代码提示级别 {
+        主界面右下角像企鹅一样的图标 -> 设置为 inspections
+    }
+
+    配置自动导包 {
+        File -> Settings -> Editor -> General -> Auto Import 
+        => Java 栏目
+        => [√勾选] Add unambiguous imports on the fly
+        => [√勾选] Optimize imports on the fly(for current project)
+        => JSP 栏目
+        => [√勾选] Add unambiguous imports on the fly
+    }
+
+    开启单词拼写检查 {
+        File -> Settings -> Editor -> Inspections => Spelling [√勾选] => Typo [√勾选]
+    }
+
+
+
+    配置编辑器打开的时候的动作 {
+        File -> Settings -> Appearance & Behavior -> System Settings
+        => [不勾选] Reopen last project on startup
+        => [选中] Open project in new window
+    }
+
+    查看历史文件 {
+        右击项目名 -> Local History
+    }
+
+    配置最近使用文件的个数 {
+        File -> Settings -> Editor -> General => Recent files limit : [50]
+    }
+
+    配置js jquery 代码自动提示 {
+        File -> Settings -> Languages & Frameworks -> JavaScript -> Libraries 
+        -> Add 
+        -> "+" 图标 
+        -> Attach Files
+        -> Name : [jquery-3.2.1.js]   //输入库名称
+        -> Framework type : [jQuery]  // 选择框架类型
+    }
+}
+################################################## Intelligent IDEA Settings : End ######################################################

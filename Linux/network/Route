@@ -1,0 +1,6 @@
+路由配置：
+    shell> cd /etc/sysconfig/network-scripts  # 该目录下，每一个 route- 开头的文件，对应一张网卡的路由配置文件，如 route-ens33 对应 ifcfg-ens33 这张网卡    
+    shell> vim /etc/sysconfig/network-scripts/route-ens33
+    Format Pattern = Target  via  Gateway
+    172.0.0.0/8  via  20.0.0.100       # 配置 172 这个网卡的路由必须通过 20 这个 ip 地址
+    

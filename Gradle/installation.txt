@@ -1,0 +1,29 @@
+############ in linux
+    shell> java -version        # 检查系统是否安装 jdk 并且版本为 1.8 以上
+    
+    shell> cd /opt
+    shell> wget https://gradle.org/next-steps/?version=5.5.1&format=bin     # 官网下载文件
+    
+    shell> unzip gradle-5.5.1-bin.zip   # 解压
+    
+    
+    # 配置环境变量
+    shell> vim /etc/profile
+    添加如下行
+    export GRADLE_HOME=/opt/Gradle/gradle-5.5.1
+    export GRADLE_USER_HOME=/opt/Gradle/LocalRepository     # gradle 本地缓存目录
+    export PATH=${PATH}:${GRADLE_HOME}/bin
+    
+    
+
+########## in windows
+# 环境检测： 系统必须已经安装 jdk 且版本必须为 1.8 以上
+    shell> java -version
+
+# 下载 gradle-4.9-bin.zip 并解压到 F:\Gradle 目录下
+    
+# 添加环境变量
+    GRADLE_HOME = F:\Gradle\gradle-4.10
+    Path = %GRADLE_HOME%\bin
+    GRADLE_USER_HOME = E:\MavenGradleLocalRepository            # gradle 本地缓存目录，gradle 会自动使用 M2_HOME 环境变量，寻找 Maven 本地仓库
+    

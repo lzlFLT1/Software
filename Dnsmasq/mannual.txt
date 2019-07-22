@@ -1,0 +1,17 @@
+解析流程：
+    dnsmasq 先去解析 hosts 文件，                    # 在 /etc/dnsmasq.conf 中加入 no-hosts 这条语句，可以跳过该步骤
+    再去解析 /etc/dnsmasq.d/ 下的 *.conf 文件，      # /etc/dnsmasq.conf 中加入 no-reslov 这条语句，可以不解析上游 DNS，即不做正常解析
+    并且这些文件的优先级要高于 dnsmasq.conf，
+    我们自定义的 resolv.dnsmasq.conf 中的 DNS 也被称为上游 DNS，这是最后去查询解析的
+
+配置文件路径：
+    /etc/domasq.conf            
+    /etc/domasq.d
+
+
+
+使用： 
+    shell> vim /etc/NetworkManager/NetworkManager.conf
+    [main]
+    dns=dnsmasq             # 添加或修改该行
+    

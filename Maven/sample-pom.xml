@@ -1,0 +1,128 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  
+  
+  
+  
+  <modelVersion>4.0.0</modelVersion><!-- maven 的版本 -->
+  <name>MavenWeb Maven Webapp</name>
+  
+  <packaging>war</packaging><!-- 默认为 jar -->
+  
+  
+  <groupId>com.kasei.mavenweb</groupId><!-- 组织名.项目名 -->
+  <artifactId>MavenWeb</artifactId><!-- 项目名-模块名：一般指定为项目名 -->
+  <version>0.0.1-SNAPSHOT</version><!-- 版本：大版本.分支版本.小版本 -->
+  <url>http://maven.apache.org</url><!-- 项目地址 -->
+  <name>this is maven web</name><!-- 项目描述名 -->
+  <description></description><!-- 项目描述 -->
+  
+  
+  <!-- 该项目中使用到的包 -->
+  <dependencies>
+  	
+  	<!-- 模板 -->
+    <dependency>
+	  <groupId></groupId><!-- 组织名： -->
+	  <artifactId></artifactId><!-- 模块名： -->
+	  <version></version><!-- 版本： -->
+	  <type></type>
+	  <scope>test</scope><!-- 指依赖范围 -->
+	  <optional>true</optional><!-- 设置依赖是否可选：如果 = true，则子项目必须显示的引用该依赖  -->
+	  <executions><!-- 排除依赖传递的列表 -->
+        	<execution>
+        		<phase>package</phase>
+        		<goals>
+        			<goal>run</goal>
+        		</goals>
+        	</execution>
+      </executions> 
+    </dependency>
+    
+    <!-- Servlet -->
+    <dependency>
+	    <groupId>javax.servlet</groupId>
+	    <artifactId>javax.servlet-api</artifactId>
+	    <version>4.0.0</version>
+	    <scope>provided</scope>
+    </dependency>
+ 
+  </dependencies>
+  
+  
+  <!-- 依赖管理器 -->
+  <dependencyManagement>
+  	<dependencies>
+  		<dependency>
+  			<groupId>org.springframework</groupId>
+  			<artifactId>spring-framework-bom</artifactId>
+  			<version>${spring.version}</version><!-- 使用变量 -->
+  			<type>pom</type>
+  			<scope>import</scope>
+  		</dependency>
+  	</dependencies>
+  </dependencyManagement>
+  
+  
+  
+  <!-- 配置相关构件 -->
+  <build>
+    <finalName>MavenWeb</finalName>
+    <plugins><!-- 插件列表 -->
+    	
+	  <plugin>  <!-- 作用：在 package 过程中打包项目源码 -->
+        <groupId>org.apache.maven.plugins</groupId>  
+        <artifactId>maven-source-plugin</artifactId>  
+        <version>2.4</version>  
+        <executions>
+        	<execution>
+        		<phase>package</phase>
+        		<goals>
+        			<goal>jar-no-fork</goal>
+        		</goals>
+        	</execution>
+        </executions> 
+      </plugin>
+      
+      <plugin>
+          <groupId>org.apache.tomcat.maven</groupId>
+          <artifactId>tomcat7-maven-plugin</artifactId>
+          <version>2.2</version>
+          <configuration>
+            <port>80</port>
+            <path>/sshe</path>
+            <uriEncoding>UTF-8</uriEncoding>
+            <server>tomcat7</server>
+          </configuration>
+	  	  <executions>
+        	<execution>
+        		<phase>package</phase>
+        		<goals>
+        			<goal>run</goal>
+        		</goals>
+        	</execution>
+        </executions> 
+      </plugin>
+        
+    </plugins>
+  </build>
+  
+  
+  <parent></parent>
+  
+  
+  <modules>
+  	<modules></modules>
+  </modules>
+  
+  
+  <!-- 定义变量 -->
+  <properties>
+  	<commons-lang.version>2.6</commons-lang.version>
+  	<slf4j.version>1.7.6</slf4j.version>
+  	<spring.version>5.0.0.RELEASE</spring.version>
+  	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  
+
+</project>
