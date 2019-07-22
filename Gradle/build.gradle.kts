@@ -6,10 +6,8 @@
  /** todo 创建一个 Gradle 构建任务
   * shell> gradle -q hello    # 使用该命令运行这个任务，-q quiet 不打印 gradle 自身的 log
   * */
-tasks.register("upper") {
+task hello {
     doLast {
-        val someString = "mY_nAmE"
-        println("Original: $someString")
-        println("Upper case: ${someString.toUpperCase()}")
+        println 'Hello world!'
     }
 }
