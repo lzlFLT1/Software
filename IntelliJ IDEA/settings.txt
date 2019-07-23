@@ -115,8 +115,16 @@ Personalize Settings {
         -> [不勾选] Generate no warnnings
         -> [勾选] Proceed on errors
 
-        Run -> Edit Configurations... -> Before launch：隐藏树下
-        -> 点击'+' -> 选择 Build, no error check -> 删除掉其他的 Build
+
+        # 整体配置
+        Run -> Edit Configurations... -> Templates 
+        -> Application -> Before launch：隐藏树下 -> 点击'+' -> 选择 Build, no error check -> 删除掉其他的 Build
+        -> Junit -> Before launch：隐藏树下 -> 点击'+' -> 选择 Build, no error check -> 删除掉其他的 Build
+
+        # 单个配置
+        Run -> Edit Configurations... -> -> Application -> 选择具体的 Run 
+        -> Before launch：隐藏树下 -> 点击'+' -> 选择 Build, no error check -> 删除掉其他的 Build
+
     }
 
 
