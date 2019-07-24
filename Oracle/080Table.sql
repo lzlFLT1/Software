@@ -20,6 +20,8 @@ create table tab(
     constraint oracle_fk foreign key(type_varchar2, type_number)references "otherTable"(str, num)
 );
 
+create table new_table as select * from old_table;
+                                                 
 -- 删表
 drop table tab;
 
